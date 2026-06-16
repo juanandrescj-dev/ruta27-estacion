@@ -1,0 +1,35 @@
+/*
+ * tokens.css — TOKENS BASE (Fase 0)
+ *
+ * Esto es solo el subconjunto mínimo de la paleta de marca para que el placeholder
+ * "próximamente" se vea on-brand y el modo claro/oscuro funcione. El sistema de
+ * diseño COMPLETO (3 capas en OKLCH con @theme + @theme inline, espaciado, radios,
+ * sombras y tipografía — §6 y §7 del PLAN) se implementa en la Fase 1.
+ *
+ * Regla anti-IA (§3): cero morado/índigo. Paleta verde-petróleo + ámbar de
+ * señalización vial. Ningún color se hardcodea fuera de este archivo.
+ */
+
+:root {
+  /* Modo claro (§6.1) */
+  --bg: #f7f5f0; /* blanco roto cálido, no #fff puro */
+  --surface: #ffffff;
+  --brand: #0e3b32; /* verde petróleo */
+  --accent: #f4a521; /* ámbar señalización */
+  --accent-text: #c9821a; /* ámbar para texto (pasa contraste AA) */
+  --ink: #1a201d; /* texto principal, no #000 puro */
+  --ink-muted: #5c645f;
+  --border: #ddd7cc;
+}
+
+[data-theme='dark'] {
+  /* Modo oscuro: no es invertir, son superficies verde-carbón cálidas (§6.1, §7) */
+  --bg: #0b1512; /* verde casi negro, cálido */
+  --surface: #11201b;
+  --brand: #3fa98c; /* verde de marca aclarado para contraste AA */
+  --accent: #f7b43f; /* ámbar sube luminosidad en dark */
+  --accent-text: #f7b43f;
+  --ink: #eaf0ec; /* no #fff puro */
+  --ink-muted: #9ba8a1;
+  --border: #243a31;
+}

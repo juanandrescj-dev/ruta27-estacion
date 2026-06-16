@@ -1,0 +1,8 @@
+/*
+ * global.css — punto de entrada de estilos.
+ *
+ * En Fase 1 aquí vivirán también el @custom-variant dark y los @font-face. Por
+ * ahora cargamos Tailwind v4 (CSS-first, sin tailwind.config.js) y los tokens base.
+ */
+@import 'tailwindcss';
+@import './tokens.css';

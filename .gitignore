@@ -1,0 +1,44 @@
+# build output
+dist/
+# generated types
+.astro/
+
+# dependencies
+node_modules/
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+
+# environment variables
+.env
+.env.*
+!.env.example
+
+# Playwright (tests e2e/visual/a11y)
+/test-results/
+/playwright-report/
+/playwright/.cache/
+/blob-report/
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# jetbrains setting folder
+.idea/
+
+# Documentos internos de planificación / propuesta (NO publicar en el repo público:
+# contienen contexto de cliente, presupuesto y estrategia). Se mantienen solo en local.
+PLAN-DE-DESARROLLO.md
+proyecto.md
+propuesta-base.md
+demo-para-propuesta.md
+prompt-base.md
+screenshot-proyecto.png
+
+# Capturas de QA generadas por la skill qa-visual-playwright
+qa-screenshots/

@@ -1,0 +1,12 @@
+# Normaliza finales de línea a LF en el repo y en checkout (también en Windows).
+# Crítico para que los hooks de Husky funcionen igual en local, CI y Cloudflare.
+* text=auto eol=lf
+
+# Binarios: nunca normalizar.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.avif binary
+*.ico binary
+*.woff2 binary

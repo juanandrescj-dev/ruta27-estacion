@@ -1,0 +1,12 @@
+# Configuración de pnpm 11 (los ajustes que antes vivían en el campo "pnpm" de
+# package.json ahora se leen desde aquí). No declaramos `packages:` porque este
+# repo es un único paquete, no un monorepo.
+#
+# pnpm 11 bloquea por seguridad (supply-chain) los build scripts de dependencias
+# con binarios nativos. Aprobamos explícitamente los de confianza y necesarios:
+# esbuild (bundler de Vite/Astro), sharp (optimización de imágenes de astro:assets)
+# y @tailwindcss/oxide (motor nativo de Tailwind v4). Queda commiteado para CI/Cloudflare.
+allowBuilds:
+  esbuild: true
+  sharp: true
+  '@tailwindcss/oxide': true

@@ -1,0 +1,12 @@
+dist/
+.astro/
+node_modules/
+pnpm-lock.yaml
+public/fonts/
+CHANGELOG.md
+# Documentos de planificación del proyecto (se mantienen tal cual)
+PLAN-DE-DESARROLLO.md
+proyecto.md
+propuesta-base.md
+demo-para-propuesta.md
+prompt-base.md
