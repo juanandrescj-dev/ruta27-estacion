@@ -1,0 +1,188 @@
+---
+// Placeholder de FASE 0 — NO es la web final.
+// Su único objetivo es confirmar que el build de Astro + Tailwind y el deploy en
+// Cloudflare Pages funcionan, ya con la paleta de marca (tokens base). El diseño real
+// (secciones, layout asimétrico, fuentes Clash/Switzer, etc.) llega desde la Fase 1.
+import '../styles/global.css';
+
+const year = new Date().getFullYear();
+---
+
+<!doctype html>
+<html lang="es-DO" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <meta name="generator" content={Astro.generator} />
+    <title>Ruta 27 — Estación de Servicio · Próximamente</title>
+    <meta
+      name="description"
+      content="Ruta 27, estación de servicio en la Autopista Duarte (Santiago, RD). Estamos construyendo el nuevo sitio. Abierto 24/7, precio justo en RD$."
+    />
+    <meta name="theme-color" content="#0e3b32" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0b1512" media="(prefers-color-scheme: dark)" />
+    <!--
+      Anti-FOUC mínimo: fija data-theme antes del primer paint leyendo localStorage /
+      prefers-color-scheme. El sistema completo (3 estados, astro:after-swap) es de Fase 1.
+    -->
+    <script is:inline>
+      try {
+        const stored = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.dataset.theme = stored ?? (prefersDark ? 'dark' : 'light');
+      } catch {
+        /* localStorage puede no estar disponible (modo privado): degradamos a claro. */
+      }
+    </script>
+  </head>
+  <body>
+    <main class="shell">
+      <p class="eyebrow">00&nbsp;&nbsp;/&nbsp;&nbsp;Ruta&nbsp;27</p>
+      <h1 class="title">Energía para seguir tu ruta.</h1>
+      <p class="lead">
+        Estamos construyendo el nuevo sitio de <strong>Ruta&nbsp;27</strong>, tu estación de
+        servicio en la Autopista Duarte. Abierto 24/7, gasolina y gasoil de calidad, precio justo
+        en&nbsp;RD$.
+      </p>
+      <p class="status">
+        <span class="dot" aria-hidden="true"></span>
+        Sitio en construcción — próximamente
+      </p>
+    </main>
+
+    <footer class="foot">
+      <p>© {year} Ruta 27 — Estación de Servicio.</p>
+      <p class="disclaimer">
+        Sitio demostrativo de portafolio. «Ruta 27» es una marca ficticia; datos, precios e imágenes
+        son ilustrativos.
+      </p>
+    </footer>
+
+    <style>
+      /* Estilos del placeholder. Usa SOLO los tokens base de tokens.css (cero colores
+         hardcodeados). Cuando empiece la Fase 1 este archivo se sustituye por el layout real. */
+      :global(html) {
+        color-scheme: light;
+      }
+      :global(html[data-theme='dark']) {
+        color-scheme: dark;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100dvh;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 3rem;
+        padding: clamp(1.5rem, 5vw, 5rem);
+        background-color: var(--bg);
+        color: var(--ink);
+        font-family:
+          ui-sans-serif,
+          system-ui,
+          -apple-system,
+          'Segoe UI',
+          Roboto,
+          Helvetica,
+          Arial,
+          sans-serif;
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
+      }
+
+      .shell {
+        max-width: 46rem;
+      }
+
+      .eyebrow {
+        margin: 0 0 1.5rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--accent-text);
+      }
+
+      .title {
+        margin: 0 0 1.25rem;
+        font-size: clamp(2.25rem, 6vw + 1rem, 4.25rem);
+        line-height: 1.04;
+        letter-spacing: -0.02em;
+        font-weight: 700;
+        color: var(--brand);
+      }
+
+      .lead {
+        max-width: 38rem;
+        margin: 0;
+        font-size: clamp(1rem, 1.2vw + 0.6rem, 1.25rem);
+        line-height: 1.65;
+        color: var(--ink-muted);
+      }
+
+      .lead strong {
+        color: var(--ink);
+        font-weight: 600;
+      }
+
+      .status {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.6rem;
+        margin: 2.25rem 0 0;
+        padding: 0.45rem 0.95rem;
+        font-size: 0.9rem;
+        color: var(--ink);
+        border: 1px solid var(--border);
+        border-radius: 999px;
+      }
+
+      .dot {
+        width: 0.5rem;
+        height: 0.5rem;
+        border-radius: 999px;
+        background: var(--accent);
+        animation: pulse 2.4s var(--ease, ease-out) infinite;
+      }
+
+      @keyframes pulse {
+        0% {
+          box-shadow: 0 0 0 0 color-mix(in oklab, var(--accent) 55%, transparent);
+        }
+        70% {
+          box-shadow: 0 0 0 0.6rem transparent;
+        }
+        100% {
+          box-shadow: 0 0 0 0 transparent;
+        }
+      }
+
+      .foot {
+        display: grid;
+        gap: 0.5rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid var(--border);
+        font-size: 0.8rem;
+        color: var(--ink-muted);
+      }
+
+      .foot p {
+        margin: 0;
+      }
+
+      .disclaimer {
+        max-width: 42rem;
+      }
+
+      /* Respeta prefers-reduced-motion (§6.4). */
+      @media (prefers-reduced-motion: reduce) {
+        .dot {
+          animation: none;
+        }
+      }
+    </style>
+  </body>
+</html>
