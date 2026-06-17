@@ -1,0 +1,2 @@
+# Redirección de WWW a Apex en Cloudflare Pages
+https://www.ruta27-estacion.pages.dev/* https://ruta27-estacion.pages.dev/:splat 301

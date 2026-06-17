@@ -7,6 +7,7 @@
 @import 'tailwindcss';
 @import './fonts.css';
 @import './tokens.css';
+@import 'maplibre-gl/dist/maplibre-gl.css';
 
 /*
  * Dark mode por ATRIBUTO (no clase .dark) — convención de design systems serios (§7).
@@ -168,5 +169,45 @@
   [data-theme='dark'] .grain-overlay {
     mix-blend-mode: screen;
     opacity: 0.05;
+  }
+
+  /*
+   * Personalización de popups de MapLibre GL para integrarlos con la paleta de tokens
+   * y que respondan adecuadamente al cambio de tema claro/oscuro.
+   */
+  .maplibregl-popup-content {
+    background-color: var(--surface) !important;
+    color: var(--ink) !important;
+    border: 1px solid var(--border) !important;
+    border-radius: var(--radius-md) !important;
+    box-shadow: var(--elev-3) !important;
+    padding: 12px 14px !important;
+  }
+
+  .maplibregl-popup-anchor-top .maplibregl-popup-tip {
+    border-bottom-color: var(--surface) !important;
+  }
+  .maplibregl-popup-anchor-bottom .maplibregl-popup-tip {
+    border-top-color: var(--surface) !important;
+  }
+  .maplibregl-popup-anchor-left .maplibregl-popup-tip {
+    border-right-color: var(--surface) !important;
+  }
+  .maplibregl-popup-anchor-right .maplibregl-popup-tip {
+    border-left-color: var(--surface) !important;
+  }
+
+  .maplibregl-popup-close-button {
+    color: var(--ink-muted) !important;
+    font-size: 16px !important;
+    font-weight: bold !important;
+    padding: 4px 8px !important;
+    border-radius: 0 var(--radius-md) 0 0 !important;
+    line-height: 1 !important;
+  }
+
+  .maplibregl-popup-close-button:hover {
+    background-color: var(--surface-sunken) !important;
+    color: var(--ink) !important;
   }
 }

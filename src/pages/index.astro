@@ -18,8 +18,10 @@ import Combustibles from '../components/sections/Combustibles.astro';
 import Servicios from '../components/sections/Servicios.astro';
 import SobreLaEstacion from '../components/sections/SobreLaEstacion.astro';
 import Diferenciadores from '../components/sections/Diferenciadores.astro';
+import Ubicacion from '../components/sections/Ubicacion.astro';
 import Horarios from '../components/sections/Horarios.astro';
 import FAQ from '../components/sections/FAQ.astro';
+import Contacto from '../components/sections/Contacto.astro';
 
 const estacion = (await getEntry('estacion', 'ruta27'))?.data as EstacionSEO;
 const horarios: DiaHorario[] = (await getCollection('horarios')).map((e) => ({
@@ -50,8 +52,10 @@ const jsonLd = [
     <Servicios />
     <SobreLaEstacion />
     <Diferenciadores />
+    <Ubicacion />
     <Horarios />
     <FAQ />
+    <Contacto />
   </main>
   <Footer />
 </BaseLayout>
