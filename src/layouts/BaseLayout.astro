@@ -1,0 +1,71 @@
+---
+/**
+ * BaseLayout.astro — esqueleto <html> compartido (§7).
+ * Incluye el script anti-FOUC `is:inline` (fija `data-theme` ANTES del primer paint y lo
+ * re-aplica en `astro:after-swap` para View Transitions), preload de la fuente del hero,
+ * color-scheme/theme-color por tema, skip-link y el overlay de grano.
+ * El SEO completo (OG, Twitter, JSON-LD, sitemap) se añade en la Fase 2.
+ */
+import '../styles/global.css';
+import { SITE } from '../config/site';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const { title, description = SITE.description } = Astro.props;
+const fullTitle = title ? `${title} · ${SITE.name}` : SITE.titleDefault;
+---
+
+<!doctype html>
+<html lang="es-DO" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    {/* Anti-FOUC: lo primero, antes del CSS, para evitar el flash de tema al cargar/navegar. */}
+    <script is:inline>
+      (function () {
+        const apply = function () {
+          try {
+            const s = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            document.documentElement.dataset.theme =
+              s === 'dark' ? 'dark' : s === 'light' ? 'light' : prefersDark ? 'dark' : 'light';
+          } catch {
+            /* localStorage no disponible: se queda en el tema por defecto (claro). */
+          }
+        };
+        apply();
+        document.addEventListener('astro:after-swap', apply);
+      })();
+    </script>
+
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="color-scheme" content="light dark" />
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+
+    <meta name="theme-color" content="#0e3b32" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0b1512" media="(prefers-color-scheme: dark)" />
+
+    {/* Preload de la fuente display (LCP del hero). 🔔 Surte efecto al subir el .woff2. */}
+    <link
+      rel="preload"
+      href="/fonts/ClashDisplay-Variable.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+
+    <slot name="head" />
+  </head>
+  <body>
+    <a href="#main" class="skip-link">Saltar al contenido</a>
+    <slot />
+    <div class="grain-overlay" aria-hidden="true"></div>
+  </body>
+</html>
