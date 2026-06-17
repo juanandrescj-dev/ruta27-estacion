@@ -1,52 +1,57 @@
 ---
 /**
- * index.astro — placeholder "próximamente" (la home real se construye en la Fase 2).
- * Ya usa el sistema de diseño de la Fase 1: tokens, fuentes, dark mode con toggle y skip-link.
+ * index.astro — home de Ruta 27 (single-page). Compone el Header, las secciones de contenido
+ * (Hero → FAQ) y el Footer. Inyecta los datos estructurados (GasStation + FAQPage) construidos
+ * a partir de los MISMOS YAML que pinta la UI, así el SEO no se desincroniza (§9.3).
+ * Ubicación (#ubicacion, mapa) y Contacto (#contacto, formulario) llegan en la Fase 3.
  */
+import { getCollection, getEntry } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import Container from '../components/ui/Container.astro';
-import Eyebrow from '../components/ui/Eyebrow.astro';
-import Badge from '../components/ui/Badge.astro';
-import ThemeToggle from '../components/interactive/ThemeToggle.tsx';
-import { getEntry } from 'astro:content';
+import { SITE } from '../config/site';
+import { buildGasStationJsonLd, buildFaqJsonLd, type EstacionSEO } from '../lib/seo';
+import type { DiaHorario } from '../lib/utils/horarios';
 
-const estacion = (await getEntry('estacion', 'ruta27'))?.data;
-const year = new Date().getFullYear();
+import Header from '../components/layout/Header.astro';
+import Footer from '../components/layout/Footer.astro';
+import Hero from '../components/sections/Hero.astro';
+import Combustibles from '../components/sections/Combustibles.astro';
+import Servicios from '../components/sections/Servicios.astro';
+import SobreLaEstacion from '../components/sections/SobreLaEstacion.astro';
+import Diferenciadores from '../components/sections/Diferenciadores.astro';
+import Horarios from '../components/sections/Horarios.astro';
+import FAQ from '../components/sections/FAQ.astro';
+
+const estacion = (await getEntry('estacion', 'ruta27'))?.data as EstacionSEO;
+const horarios: DiaHorario[] = (await getCollection('horarios')).map((e) => ({
+  id: e.id,
+  ...e.data,
+}));
+// Mismo orden que el acordeón visible (FAQ.astro) → el FAQPage no se desincroniza.
+const faq = (await getCollection('faq'))
+  .sort((a, b) => a.data.orden - b.data.orden)
+  .map((f) => f.data);
+
+const jsonLd = [
+  buildGasStationJsonLd({
+    estacion,
+    horarios,
+    site: Astro.site,
+    imagePath: SITE.ogImage,
+  }),
+  buildFaqJsonLd(faq),
+];
 ---
 
-<BaseLayout>
-  <header class="absolute inset-x-0 top-0 z-50">
-    <Container size="wide" class="flex items-center justify-between py-5">
-      <span class="font-display text-h3 leading-none font-semibold text-brand">Ruta 27</span>
-      <ThemeToggle client:idle />
-    </Container>
-  </header>
-
-  <main id="main" class="flex min-h-[100dvh] flex-col justify-center py-28">
-    <Container size="default" class="flex flex-col items-start">
-      <Eyebrow numero="00">Próximamente</Eyebrow>
-      <h1 class="mt-5 max-w-3xl font-display text-display font-semibold text-balance">
-        {estacion?.eslogan ?? 'Energía para seguir tu ruta'}.
-      </h1>
-      <p class="mt-6 max-w-xl text-lead text-ink-muted">
-        Estamos construyendo el nuevo sitio de <strong class="font-semibold text-ink"
-          >Ruta 27</strong
-        >, tu estación de servicio en la Autopista Duarte. Abierta 24/7, gasolina y gasoil de
-        calidad, precio justo en&nbsp;RD$.
-      </p>
-      <div class="mt-8">
-        <Badge variant="brand" dot>Sitio en construcción</Badge>
-      </div>
-    </Container>
+<BaseLayout jsonLd={jsonLd}>
+  <Header />
+  <main id="main">
+    <Hero />
+    <Combustibles />
+    <Servicios />
+    <SobreLaEstacion />
+    <Diferenciadores />
+    <Horarios />
+    <FAQ />
   </main>
-
-  <footer class="border-t border-line py-8">
-    <Container size="default" class="flex flex-col gap-2 text-small text-ink-muted">
-      <p>© {year} Ruta 27 — Estación de Servicio.</p>
-      <p class="max-w-2xl">
-        Sitio demostrativo de portafolio. «Ruta 27» es una marca ficticia; datos, precios e imágenes
-        son ilustrativos.
-      </p>
-    </Container>
-  </footer>
+  <Footer />
 </BaseLayout>
