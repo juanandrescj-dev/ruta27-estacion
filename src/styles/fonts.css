@@ -1,0 +1,51 @@
+/*
+ * fonts.css — Tipografía self-host (§6.2, §9.5)
+ * ─────────────────────────────────────────────────────────────────────────────────────
+ * Clash Display (display) + Switzer (texto), ambas de Fontshare (gratis, uso comercial).
+ * Self-host en /public/fonts/ → sin Google Fonts CDN (bloqueante + "tell" de IA).
+ *
+ * Usamos las versiones VARIABLES (un solo .woff2 por familia cubre todos los pesos):
+ * menos peticiones, mejor LCP. `font-display: swap` + la pila de fallback de tokens.css
+ * mantienen el texto visible mientras el .woff2 carga (o mientras aún no se ha subido).
+ *
+ * 🔔 Estos archivos los sube el cliente/dev a /public/fonts/ (ver lista en el PR). Hasta
+ *    entonces, el sitio se ve con la fuente de fallback (no se rompe nada).
+ */
+
+@font-face {
+  font-family: 'Clash Display';
+  src: url('/fonts/ClashDisplay-Variable.woff2') format('woff2-variations');
+  font-weight: 200 700; /* eje wght de Clash Display */
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Switzer';
+  src: url('/fonts/Switzer-Variable.woff2') format('woff2-variations');
+  font-weight: 100 900; /* eje wght de Switzer */
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Switzer';
+  src: url('/fonts/Switzer-Italic-Variable.woff2') format('woff2-variations');
+  font-weight: 100 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+/*
+ * Fallback métricamente ajustado (§9.5) para minimizar el CLS por "font swap".
+ * Aproxima las métricas de Switzer sobre la system-ui local. Los valores finos se calibran
+ * en la Fase 6 (perf) midiendo con la fuente real; estos ya reducen el salto notablemente.
+ */
+@font-face {
+  font-family: 'Switzer Fallback';
+  src: local('Segoe UI'), local('Helvetica Neue'), local('Arial');
+  size-adjust: 100%;
+  ascent-override: 96%;
+  descent-override: 24%;
+  line-gap-override: 0%;
+}
