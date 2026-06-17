@@ -1,0 +1,28 @@
+{
+  "mcpServers": {
+    "playwright": {
+      "command": "cmd",
+      "args": [
+        "/c",
+        "npx",
+        "-y",
+        "@playwright/mcp@latest",
+        "--caps",
+        "vision,pdf,devtools,testing",
+        "--viewport-size",
+        "1440x900",
+        "--save-session",
+        "--output-dir",
+        "./.playwright-mcp"
+      ]
+    },
+    "chrome-devtools": {
+      "command": "cmd",
+      "args": ["/c", "npx", "-y", "chrome-devtools-mcp@latest"]
+    },
+    "context7": {
+      "command": "cmd",
+      "args": ["/c", "npx", "-y", "@upstash/context7-mcp", "--api-key", "${CONTEXT7_API_KEY}"]
+    }
+  }
+}
