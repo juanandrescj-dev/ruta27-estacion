@@ -25,6 +25,9 @@ export const ICONOS = [
   'ev',
 ] as const;
 
+/** Claves de icono de los diferenciadores (mapeadas a Lucide en la sección). */
+export const ICONOS_DIFERENCIADOR = ['galon', 'horario', 'calidad', 'ubicacion'] as const;
+
 const HHMM = /^([01]\d|2[0-3]):[0-5]\d$/;
 
 // estacion.yaml es un registro único (clave "ruta27") → una sola entrada en la colección.
@@ -61,6 +64,7 @@ const combustibles = defineCollection({
 const servicios = defineCollection({
   loader: file('src/data/servicios.yaml'),
   schema: z.object({
+    orden: z.number().int().positive(),
     titulo: z.string().min(1),
     descripcion: z.string().min(1),
     icono: z.enum(ICONOS),
@@ -81,4 +85,23 @@ const horarios = defineCollection({
     }),
 });
 
-export const collections = { estacion, combustibles, servicios, horarios };
+const diferenciadores = defineCollection({
+  loader: file('src/data/diferenciadores.yaml'),
+  schema: z.object({
+    orden: z.number().int().positive(),
+    titulo: z.string().min(1),
+    descripcion: z.string().min(1),
+    icono: z.enum(ICONOS_DIFERENCIADOR),
+  }),
+});
+
+const faq = defineCollection({
+  loader: file('src/data/faq.yaml'),
+  schema: z.object({
+    orden: z.number().int().positive(),
+    pregunta: z.string().min(1),
+    respuesta: z.string().min(1),
+  }),
+});
+
+export const collections = { estacion, combustibles, servicios, horarios, diferenciadores, faq };

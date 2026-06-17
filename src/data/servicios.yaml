@@ -1,27 +1,34 @@
 # servicios.yaml — servicios de la estación (editable por el cliente).
 # `icono` ∈ surtidor | lavado | glp | aire | tienda | aceite | cafe | cajero | wifi | bano | ev
 # (surtidor/lavado/glp/aire = SVG de dominio propios; el resto, iconos Lucide.)
+# `orden`: controla la posición (getCollection ordena por id alfabético; orden lo sobreescribe).
 - id: tienda
+  orden: 1
   titulo: 'Tienda de conveniencia'
   descripcion: 'Snacks, bebidas bien frías y lo esencial para el camino, las 24 horas.'
   icono: tienda
 - id: lavado
+  orden: 2
   titulo: 'Lavado de autos'
   descripcion: 'Lavado rápido a presión: tu carro queda listo mientras tanqueas.'
   icono: lavado
 - id: aire-agua
+  orden: 3
   titulo: 'Aire y agua'
   descripcion: 'Aire para las llantas y agua disponibles, sin costo para clientes.'
   icono: aire
 - id: lubricantes
+  orden: 4
   titulo: 'Cambio de aceite y lubricantes'
   descripcion: 'Lubricantes de marca y cambio express con personal capacitado.'
   icono: aceite
 - id: glp
+  orden: 5
   titulo: 'GLP (gas propano)'
   descripcion: 'Despacho de gas propano a galón exacto. Aquí llenas tranquilo.'
   icono: glp
 - id: cafeteria
+  orden: 6
   titulo: 'Cafetería'
   descripcion: 'Café dominicano recién colado y picadera para seguir la ruta.'
   icono: cafe
