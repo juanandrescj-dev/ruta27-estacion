@@ -14,8 +14,8 @@ export default defineConfig({
   integrations: [
     // React solo para las islas interactivas (mapa, menú móvil, toggle de tema).
     react(),
-    // Genera sitemap-index.xml (+ sitemap-0.xml). Monolingüe es-DO, una sola página.
-    sitemap({ i18n: undefined }),
+    // Genera sitemap-index.xml (+ sitemap-0.xml). Monolingüe es-DO, una sola página → sin opciones.
+    sitemap(),
   ],
   vite: {
     // Tailwind v4 vía el plugin de Vite (NO @astrojs/tailwind, NO tailwind.config.js).
