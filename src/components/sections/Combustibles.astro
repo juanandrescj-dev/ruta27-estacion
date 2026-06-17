@@ -1,0 +1,116 @@
+---
+/**
+ * Combustibles.astro — precios por galón (#combustibles). Bento ASIMÉTRICO (anti-IA §3 tell
+ * #5: nada de 3 cards idénticas): la Premium es la card destacada (2×2) y el resto, compactas
+ * de pesos distintos. Precios con format.ts (RD$ es-DO) y nota de vigencia (§9.1). El color
+ * del "swatch" sale de un TOKEN (var(--brand)…), nunca de un HEX (§3).
+ */
+import { getCollection } from 'astro:content';
+import Section from '../ui/Section.astro';
+import Eyebrow from '../ui/Eyebrow.astro';
+import Badge from '../ui/Badge.astro';
+import { formatRD, formatFechaLarga } from '../../lib/utils/format';
+
+const combustibles = (await getCollection('combustibles')).sort(
+  (a, b) => b.data.precioRD - a.data.precioRD,
+);
+const vigencia = combustibles[0]?.data.vigencia;
+
+const swatchVar: Record<string, string> = {
+  brand: 'var(--brand)',
+  'brand-strong': 'var(--brand-strong)',
+  accent: 'var(--accent)',
+  'accent-text': 'var(--accent-text)',
+  signal: 'var(--signal)',
+};
+
+// Pesos del bento por posición (la primera card domina; el resto varía).
+const span = [
+  'sm:col-span-2 lg:col-span-3 lg:row-span-2',
+  'lg:col-span-3',
+  'lg:col-span-1',
+  'lg:col-span-1',
+  'lg:col-span-1',
+];
+---
+
+<Section id="combustibles" space="lg" containerSize="wide" labelledby="combustibles-title">
+  <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+    <div class="max-w-2xl">
+      <Eyebrow numero="01">Combustibles y precios</Eyebrow>
+      <h2 id="combustibles-title" class="mt-3 font-display text-h1 font-semibold text-balance">
+        Precios claros, despacho a galón exacto.
+      </h2>
+    </div>
+    <p class="max-w-sm text-body text-ink-muted md:text-right">
+      Lo que marca la bomba es lo que recibe tu tanque. Sin letra chica.
+    </p>
+  </div>
+
+  <ul class="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-6">
+    {
+      combustibles.map((c, i) => {
+        const featured = i === 0;
+        return (
+          <li class={span[i] ?? 'lg:col-span-2'}>
+            <article
+              class:list={[
+                'flex h-full flex-col rounded-lg border border-line bg-surface shadow-1',
+                featured ? 'p-7 sm:p-8' : 'p-6',
+              ]}
+            >
+              <div class="flex items-center gap-2.5">
+                <span
+                  class="size-3 shrink-0 rounded-full"
+                  style={`background-color: ${swatchVar[c.data.swatch]}`}
+                  aria-hidden="true"
+                />
+                <h3
+                  class:list={[
+                    'font-display font-semibold text-ink',
+                    featured ? 'text-h3' : 'text-h3',
+                  ]}
+                >
+                  {c.data.nombre}
+                </h3>
+                {c.data.octanaje && (
+                  <span class="ml-auto text-small font-medium text-ink-muted">
+                    {c.data.octanaje} oct.
+                  </span>
+                )}
+              </div>
+
+              {featured && (
+                <p class="mt-3 max-w-md text-body text-ink-muted">
+                  Nuestra gasolina de mayor octanaje, para motores que piden lo mejor. Calidad
+                  certificada y disponible las 24 horas.
+                </p>
+              )}
+
+              <div class={featured ? 'mt-auto pt-8' : 'mt-auto pt-6'}>
+                <p
+                  class:list={[
+                    'font-display font-semibold text-brand tabular-nums',
+                    featured ? 'text-display leading-none' : 'text-h2',
+                  ]}
+                >
+                  {formatRD(c.data.precioRD)}
+                </p>
+                <p class="mt-1 text-small text-ink-muted">por galón</p>
+              </div>
+            </article>
+          </li>
+        );
+      })
+    }
+  </ul>
+
+  <div class="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+    <p class="max-w-2xl text-small text-ink-muted">
+      Precios oficiales ilustrativos{
+        vigencia ? `, actualizados al ${formatFechaLarga(vigencia)}` : ''
+      }. Vigentes según la tarifa semanal del Ministerio de Industria, Comercio y Mipymes.
+    </p>
+    <Badge variant="signal" class="self-start sm:self-auto">Precio sujeto a cambio</Badge>
+  </div>
+</Section>

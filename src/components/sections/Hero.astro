@@ -1,0 +1,103 @@
+---
+/**
+ * Hero.astro — sección de apertura (#inicio). Asimétrico 7/5 (anti-IA §3 tell #3), alineación
+ * izquierda dominante, numeración editorial "00 / Inicio" (tell #14). H1 y subtítulo con la
+ * voz dominicana del plan (§9.1). El hueco de imagen reserva su caja (aspect-ratio) para que
+ * la foto real de la Fase 5 entre sin causar CLS. Dos CTAs: "Cómo llegar" + "Ver precios".
+ */
+import { getEntry, getCollection } from 'astro:content';
+import Container from '../ui/Container.astro';
+import Eyebrow from '../ui/Eyebrow.astro';
+import Button from '../ui/Button.astro';
+import Badge from '../ui/Badge.astro';
+import Surtidor from '../ui/icons/Surtidor.astro';
+import { comoLlegarUrl } from '../../config/nav';
+import { estaAbiertoAhora, type DiaHorario } from '../../lib/utils/horarios';
+import { MapPin, ArrowRight } from '@lucide/astro';
+
+const estacion = (await getEntry('estacion', 'ruta27'))?.data;
+const comoLlegar = estacion ? comoLlegarUrl(estacion.geo) : '#';
+
+const horarios: DiaHorario[] = (await getCollection('horarios')).map((e) => ({
+  id: e.id,
+  ...e.data,
+}));
+const estado = estaAbiertoAhora(horarios);
+---
+
+<section id="inicio" class="scroll-mt-[calc(var(--header-h)+1rem)] pt-10 pb-20 sm:pt-16 lg:pb-28">
+  <Container size="wide">
+    <div class="grid items-center gap-10 lg:grid-cols-12 lg:gap-12">
+      <!-- Columna de texto: 7/12 -->
+      <div class="lg:col-span-7">
+        <Eyebrow numero="00">Inicio</Eyebrow>
+
+        <h1 class="mt-6 max-w-[18ch] font-display text-display leading-[1.02] font-semibold">
+          Combustible de confianza en <span class="text-brand">Santiago</span>, cada día del año.
+        </h1>
+
+        <p class="mt-6 max-w-xl text-lead text-ink-muted">
+          Ruta 27 te atiende 24 horas con gasolina y gasoil de calidad certificada, tienda de
+          conveniencia y el mejor servicio de la Autopista Duarte.
+        </p>
+
+        <div class="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
+          <Button
+            variant="primario"
+            size="lg"
+            href={comoLlegar}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <MapPin size={19} aria-hidden="true" /> Cómo llegar
+          </Button>
+          <Button variant="ghost" size="lg" href="#combustibles">
+            Ver precios <ArrowRight size={18} aria-hidden="true" />
+          </Button>
+        </div>
+
+        <!-- Señales de confianza -->
+        <div class="mt-9 flex flex-wrap items-center gap-x-6 gap-y-3">
+          <Badge variant={estado.abierto ? 'brand' : 'signal'} dot>{estado.etiqueta}</Badge>
+          <span class="inline-flex items-center gap-2 text-small text-ink-muted">
+            <MapPin size={16} aria-hidden="true" />
+            {estacion?.direccion}
+          </span>
+        </div>
+      </div>
+
+      <!-- Columna de imagen: 5/12. Hueco con caja reservada (foto real → Fase 5). -->
+      <div class="lg:col-span-5">
+        <figure
+          class="relative aspect-[4/5] overflow-hidden rounded-xl border border-line bg-surface-sunken shadow-2"
+        >
+          <!-- Marca de agua editorial -->
+          <span
+            class="pointer-events-none absolute top-5 left-5 font-display text-h1 leading-none font-semibold text-ink/12 tabular-nums select-none"
+            aria-hidden="true"
+          >
+            00
+          </span>
+
+          <!-- Icono de dominio como marcador del encuadre -->
+          <div class="absolute inset-0 flex items-center justify-center text-brand/25">
+            <Surtidor size={120} />
+          </div>
+
+          <!-- Tinte de marca sutil (duotono provisional; la foto llega en Fase 5) -->
+          <div
+            class="pointer-events-none absolute inset-0 bg-gradient-to-tr from-[color-mix(in_oklab,var(--brand)_18%,transparent)] to-transparent"
+            aria-hidden="true"
+          >
+          </div>
+
+          <figcaption
+            class="absolute inset-x-0 bottom-0 border-t border-line bg-surface px-5 py-3 text-small text-ink-muted"
+          >
+            Estación Ruta 27 · Autopista Duarte, Santiago
+          </figcaption>
+        </figure>
+      </div>
+    </div>
+  </Container>
+</section>

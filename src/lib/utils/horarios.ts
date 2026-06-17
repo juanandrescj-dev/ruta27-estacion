@@ -29,6 +29,17 @@ export interface EstadoApertura {
 /** getDay() devuelve 0=domingo … 6=sábado; este orden mapea ese índice a la clave del día. */
 const DIA_IDS = ['dom', 'lun', 'mar', 'mie', 'jue', 'vie', 'sab'] as const;
 
+/** Orden de presentación de la semana (lunes primero), para la tabla y el JSON-LD. */
+const ORDEN_SEMANA = ['lun', 'mar', 'mie', 'jue', 'vie', 'sab', 'dom'];
+
+/**
+ * Ordena los horarios de lunes a domingo. `getCollection` los devuelve por id alfabético, así
+ * que este sort es necesario para que la tabla y el openingHoursSpecification salgan en orden.
+ */
+export function ordenarSemana<T extends { id: string }>(horarios: T[]): T[] {
+  return [...horarios].sort((a, b) => ORDEN_SEMANA.indexOf(a.id) - ORDEN_SEMANA.indexOf(b.id));
+}
+
 const aMinutos = (hhmm: string): number => {
   const [h, m] = hhmm.split(':').map(Number);
   return h * 60 + m;
