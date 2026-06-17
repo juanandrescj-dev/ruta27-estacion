@@ -1,0 +1,20 @@
+# estacion.yaml — datos del negocio (editable por el cliente).
+# Registro único con la clave/id "ruta27" (forma "objeto con id como clave" del loader file()).
+# Datos FICTICIOS pero realistas dominicanos (§2, §10). Validados con Zod en content.config.ts.
+ruta27:
+  nombre: 'Ruta 27'
+  eslogan: 'Energía para seguir tu ruta'
+  descripcion: >-
+    Estación de servicio en la Autopista Duarte (Santiago, RD). Abierta 24/7 con gasolina y
+    gasoil de calidad certificada, tienda de conveniencia y el mejor servicio de la zona.
+  direccion: 'Autopista Duarte Km 8, Santiago de los Caballeros, RD'
+  telefono: '+1-809-000-0000'
+  whatsapp: '18090000000'
+  rnc: '1-00-00000-0'
+  geo:
+    lat: 19.4517
+    lng: -70.697
+  redes:
+    facebook: '#'
+    instagram: '#'
+    tiktok: '#'
