@@ -1,0 +1,7 @@
+# robots.txt — Ruta 27 (demo de portafolio).
+# Sitio público de una sola página; se permite el rastreo completo y se apunta al sitemap
+# que genera @astrojs/sitemap en el build (§9.3).
+User-agent: *
+Allow: /
+
+Sitemap: https://ruta27-estacion.pages.dev/sitemap-index.xml

@@ -1,10 +1,12 @@
 ---
 /**
- * BaseLayout.astro — esqueleto <html> compartido (§7).
- * Incluye el script anti-FOUC `is:inline` (fija `data-theme` ANTES del primer paint y lo
- * re-aplica en `astro:after-swap` para View Transitions), preload de la fuente del hero,
- * color-scheme/theme-color por tema, skip-link y el overlay de grano.
- * El SEO completo (OG, Twitter, JSON-LD, sitemap) se añade en la Fase 2.
+ * BaseLayout.astro — esqueleto <html> compartido (§7, §9.3).
+ * ─────────────────────────────────────────────────────────────────────────────────────
+ * - Script anti-FOUC `is:inline` (fija `data-theme` ANTES del primer paint y lo re-aplica en
+ *   `astro:after-swap` para View Transitions).
+ * - SEO técnico base: canonical, Open Graph, Twitter Card, color-scheme/theme-color por tema.
+ * - Datos estructurados: cada string de `jsonLd` se emite como un <script type=ld+json>.
+ * - Preload de la fuente del hero (LCP), skip-link y overlay de grano.
  */
 import '../styles/global.css';
 import { SITE } from '../config/site';
@@ -12,10 +14,16 @@ import { SITE } from '../config/site';
 interface Props {
   title?: string;
   description?: string;
+  /** Bloques JSON-LD ya serializados (p. ej. GasStation, FAQPage). */
+  jsonLd?: string[];
 }
 
-const { title, description = SITE.description } = Astro.props;
+const { title, description = SITE.description, jsonLd = [] } = Astro.props;
 const fullTitle = title ? `${title} · ${SITE.name}` : SITE.titleDefault;
+
+// URLs absolutas para canonical / OG (requieren `site` en astro.config.mjs).
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const ogImage = new URL(SITE.ogImage, Astro.site).href;
 ---
 
 <!doctype html>
@@ -44,6 +52,8 @@ const fullTitle = title ? `${title} · ${SITE.name}` : SITE.titleDefault;
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
     <meta name="generator" content={Astro.generator} />
+    <link rel="canonical" href={canonical} />
+    <meta name="robots" content="index, follow" />
     <meta name="color-scheme" content="light dark" />
 
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -51,6 +61,25 @@ const fullTitle = title ? `${title} · ${SITE.name}` : SITE.titleDefault;
 
     <meta name="theme-color" content="#0e3b32" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#0b1512" media="(prefers-color-scheme: dark)" />
+
+    {/* Open Graph */}
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={SITE.name} />
+    <meta property="og:locale" content="es_DO" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={SITE.ogImageAlt} />
+
+    {/* Twitter */}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+    <meta name="twitter:image:alt" content={SITE.ogImageAlt} />
 
     {/* Preload de la fuente display (LCP del hero). 🔔 Surte efecto al subir el .woff2. */}
     <link
@@ -60,6 +89,9 @@ const fullTitle = title ? `${title} · ${SITE.name}` : SITE.titleDefault;
       type="font/woff2"
       crossorigin
     />
+
+    {/* Datos estructurados (§9.3). set:html con string ya serializado por lib/seo.ts. */}
+    {jsonLd.map((block) => <script type="application/ld+json" is:inline set:html={block} />)}
 
     <slot name="head" />
   </head>
