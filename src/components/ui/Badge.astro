@@ -1,0 +1,39 @@
+---
+/**
+ * Badge.astro — etiqueta breve tipo "pill" (único sitio donde se usa radius-full, §3 tell #12).
+ * Superficie tintada (color-mix sobre el token, sin HEX) + borde sutil + texto que pasa AA.
+ * `dot` muestra un punto de estado (p. ej. "Abierto ahora").
+ */
+import type { HTMLTag } from 'astro/types';
+import { cn } from '../../lib/utils/cn';
+
+interface Props {
+  variant?: 'neutral' | 'brand' | 'accent' | 'signal';
+  dot?: boolean;
+  as?: HTMLTag;
+  class?: string;
+}
+
+const { variant = 'neutral', dot = false, as: Tag = 'span', class: className }: Props = Astro.props;
+
+const variants = {
+  neutral: 'bg-surface-sunken text-ink-muted border-line',
+  brand:
+    'bg-[color-mix(in_oklab,var(--brand)_12%,transparent)] text-brand border-[color-mix(in_oklab,var(--brand)_28%,transparent)]',
+  accent:
+    'bg-[color-mix(in_oklab,var(--accent)_16%,transparent)] text-accent-text border-[color-mix(in_oklab,var(--accent)_32%,transparent)]',
+  signal:
+    'bg-[color-mix(in_oklab,var(--signal)_14%,transparent)] text-signal-text border-[color-mix(in_oklab,var(--signal)_30%,transparent)]',
+} as const;
+---
+
+<Tag
+  class={cn(
+    'inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-small font-semibold leading-none',
+    variants[variant],
+    className,
+  )}
+>
+  {dot && <span class="size-1.5 shrink-0 rounded-full bg-current" aria-hidden="true" />}
+  <slot />
+</Tag>

@@ -1,0 +1,40 @@
+---
+/**
+ * Aire.astro — icono de dominio (aire para llantas): neumático con válvula y rayos.
+ * SVG inline propio a 24×24, stroke 1.75 redondo para igualar a Lucide (§8).
+ */
+interface Props {
+  size?: number;
+  title?: string;
+  class?: string;
+}
+const { size = 24, title, class: className } = Astro.props;
+---
+
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="1.75"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  class={className}
+  role={title ? 'img' : undefined}
+  aria-label={title}
+  aria-hidden={title ? undefined : 'true'}
+>
+  {title && <title>{title}</title>}
+  <!-- Neumático -->
+  <circle cx="11" cy="13" r="7.5"></circle>
+  <circle cx="11" cy="13" r="2.75"></circle>
+  <!-- Válvula -->
+  <path d="M11 5.5V3"></path>
+  <rect x="9.9" y="1.6" width="2.2" height="1.6" rx="0.4"></rect>
+  <!-- Rayos -->
+  <path d="M12.94 14.94 16.3 18.3"></path>
+  <path d="M9.06 14.94 5.7 18.3"></path>
+  <path d="M9.06 11.06 5.7 7.7"></path>
+  <path d="M12.94 11.06 16.3 7.7"></path>
+</svg>

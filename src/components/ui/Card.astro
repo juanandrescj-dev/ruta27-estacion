@@ -1,0 +1,44 @@
+---
+/**
+ * Card.astro — superficie contenedora. Superficie sólida + borde 1px (NO glassmorphism, §3).
+ * Radio 14px (rounded-lg). Variantes por elevación; en dark, elevar = aclarar superficie.
+ * `interactive` añade el realce al hover para tarjetas que son enlaces.
+ */
+import type { HTMLTag } from 'astro/types';
+import { cn } from '../../lib/utils/cn';
+
+interface Props {
+  as?: HTMLTag;
+  variant?: 'default' | 'raised' | 'sunken';
+  interactive?: boolean;
+  padded?: boolean;
+  class?: string;
+}
+
+const {
+  as: Tag = 'div',
+  variant = 'default',
+  interactive = false,
+  padded = true,
+  class: className,
+}: Props = Astro.props;
+
+const variants = {
+  default: 'bg-surface shadow-1',
+  raised: 'bg-surface-raised shadow-2',
+  sunken: 'bg-surface-sunken shadow-none',
+} as const;
+---
+
+<Tag
+  class={cn(
+    'rounded-lg border border-line text-ink',
+    variants[variant],
+    padded && 'p-6 sm:p-7',
+    interactive &&
+      'transition duration-200 ease-out-soft motion-safe:hover:-translate-y-1 hover:border-line-strong hover:shadow-3',
+    className,
+  )}
+>
+  <slot />
+</Tag>
