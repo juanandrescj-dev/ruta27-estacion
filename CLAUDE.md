@@ -62,6 +62,9 @@ pnpm test:e2e      # playwright test (tests llegan en fases posteriores)
 - Accesibilidad WCAG 2.2 AA en **ambos** temas; `prefers-reduced-motion` respetado.
 - **Git**: ramas por fase + PR descriptivo + **Conventional Commits** (`feat:`, `fix:`, `perf:`,
   `docs:`, `chore:`, `ci:`, `refactor:`, `test:`, `style:`). Nada de "initial commit" gigante.
+- **Context7 (híbrido)**: antes de escribir código que toque APIs de librerías externas
+  (Astro 6, Tailwind v4, Lenis, MapLibre, GSAP) con duda de API/versión, **consulta Context7**
+  (no respondas de memoria); y siempre que el usuario mencione `context7`.
 
 ## Estructura
 
@@ -93,6 +96,23 @@ específicas e intencionales. **Si algo pudiera salir por defecto de un generado
 
 Antes de cada deploy, pasar la checklist "no parece IA" (§3 del plan) y las skills
 `anti-ia-design-review`, `qa-visual-playwright` y `perf-a11y-gate` (en `.claude/skills/`).
+
+## Tooling de IA (skills · MCP · agentes)
+
+El índice operativo completo está en **[`GUIA-SKILLS-AGENTES-RULES.md`](./GUIA-SKILLS-AGENTES-RULES.md)**:
+qué skill, MCP, agente o regla cargar según la tarea. Un hook `UserPromptSubmit` recuerda
+consultarlo en cada prompt. Resumen:
+
+- **Skills** (`.claude/skills/`): `component-scaffold`, `playwright-mcp` (motor de pruebas),
+  `qa-visual-playwright` (QA visual rápida), `responsive-audit` (responsividad), `quality-audit`
+  (QA transversal), `anti-ia-design-review`, `perf-a11y-gate`.
+- **MCP** (`.mcp.json`): `playwright` (pruebas), `chrome-devtools` (emulación de dispositivo +
+  Lighthouse), `context7` (docs frescas). El secreto `CONTEXT7_API_KEY` va en
+  `.claude/settings.local.json` (gitignored); `.mcp.json` lo expande como `${CONTEXT7_API_KEY}`.
+- **Decisión**: `playwright` y `chrome-devtools` **no se unifican** (banco de pruebas vs
+  microscopio de dispositivo); `responsive-audit` usa ambos.
+
+> Tras tocar `.mcp.json`, **reinicia Claude Code** y verifica con `/mcp`.
 
 ## Plan por fases
 
