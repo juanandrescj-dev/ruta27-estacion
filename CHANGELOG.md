@@ -9,6 +9,23 @@ y el proyecto usa [Versionado Semántico](https://semver.org/lang/es/).
 
 ### Added
 
+- **Fase 1 — Sistema de diseño, modo claro/oscuro y datos.**
+  - `tokens.css` como fuente única de verdad: 3 capas (primitivos en OKLCH `@theme`,
+    semánticos por tema en `:root`/`[data-theme]`, y puente `@theme inline` para que el dark
+    mode cambie en runtime). Tokens de color, tipografía fluida, espaciado, radios y sombras.
+  - Modo claro/oscuro por atributo `data-theme` con script anti-FOUC `is:inline` (+ reaplicación
+    en `astro:after-swap`) e isla React `ThemeToggle` de 3 estados (claro/oscuro/sistema) accesible.
+  - Tipografía self-host Clash Display + Switzer (`@font-face` con `font-display: swap`, preload del
+    hero y fallback métricamente ajustado).
+  - Componentes `ui/` base: `Button`, `Card`, `Badge`, `Container`, `Eyebrow` (numeración editorial)
+    e iconos de dominio SVG inline (`Surtidor`, `Lavado`, `GLP`, `Aire`); `@lucide/astro` para UI.
+  - Datos del negocio en `src/data/*.yaml` validados con Zod en `content.config.ts` (build falla si
+    el contenido es inválido). Utilidades `lib/utils` (`cn`, `format` RD$/es-DO, `horarios`
+    «¿abierto ahora?») con 21 pruebas Vitest.
+  - Página temporal `/styleguide` (vitrina del sistema en ambos temas, se elimina en la Fase 2).
+  - Contraste verificado WCAG 2.2 AA en ambos temas (ámbar y rojo de texto ajustados a tokens
+    AA-safe sin perder identidad de marca).
+
 - **Fase 0 — Entorno y andamiaje.**
   - Proyecto Astro 6 (estático, sin adapter) con TypeScript en modo `strict`.
   - Integración de React 19 para las futuras islas interactivas.

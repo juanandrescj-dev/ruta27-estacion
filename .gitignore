@@ -42,3 +42,5 @@ screenshot-proyecto.png
 
 # Capturas de QA generadas por la skill qa-visual-playwright
 qa-screenshots/
+# Artefactos del MCP de Playwright
+.playwright-mcp/
