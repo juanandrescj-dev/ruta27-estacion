@@ -1,0 +1,60 @@
+---
+/**
+ * Section.astro — envoltura semántica de sección con ritmo vertical VARIABLE (anti-IA §3
+ * tell #10: el spacing uniforme delata IA). Cada sección elige su `space` según su peso y,
+ * opcionalmente, una `surface` hundida para alternar el fondo a todo el ancho.
+ * El contenido va dentro de un Container (ancho configurable). `scroll-mt` compensa el header.
+ */
+import type { HTMLTag } from 'astro/types';
+import Container from './Container.astro';
+import { cn } from '../../lib/utils/cn';
+
+interface Props {
+  id?: string;
+  as?: HTMLTag;
+  /** Ritmo vertical. Intencionalmente NO uniforme entre secciones. */
+  space?: 'sm' | 'md' | 'lg' | 'xl';
+  surface?: 'base' | 'sunken';
+  containerSize?: 'narrow' | 'default' | 'wide';
+  /** Etiqueta accesible de la sección (se enlaza con aria-labelledby vía `labelledby`). */
+  ariaLabel?: string;
+  labelledby?: string;
+  class?: string;
+  containerClass?: string;
+}
+
+const {
+  id,
+  as: Tag = 'section',
+  space = 'md',
+  surface = 'base',
+  containerSize = 'default',
+  ariaLabel,
+  labelledby,
+  class: className,
+  containerClass,
+}: Props = Astro.props;
+
+const spaces: Record<NonNullable<Props['space']>, string> = {
+  sm: 'py-16 sm:py-20',
+  md: 'py-20 sm:py-24',
+  lg: 'py-24 sm:py-28',
+  xl: 'py-28 sm:py-36',
+};
+---
+
+<Tag
+  id={id}
+  aria-label={ariaLabel}
+  aria-labelledby={labelledby}
+  class={cn(
+    'scroll-mt-[calc(var(--header-h)+1rem)]',
+    spaces[space],
+    surface === 'sunken' && 'bg-surface-sunken',
+    className,
+  )}
+>
+  <Container size={containerSize} class={containerClass}>
+    <slot />
+  </Container>
+</Tag>

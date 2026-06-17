@@ -1,0 +1,153 @@
+---
+/**
+ * Footer.astro — pie del sitio (§9.1). Dirección, RNC, contacto, redes y el DISCLAIMER de
+ * demo OBLIGATORIO (§2). Es un "isla de tema" deliberada: SIEMPRE verde petróleo en ambos
+ * temas (decisión de diseño, no inversión). Lo logra reasignando localmente los tokens
+ * semánticos (--surface/--ink/--border…), así las utilidades text-ink, border-line, etc.
+ * resuelven a la paleta del pie sin hardcodear ningún color.
+ */
+import { getEntry } from 'astro:content';
+import Container from '../ui/Container.astro';
+import { NAV_ITEMS, comoLlegarUrl } from '../../config/nav';
+import { MapPin, Phone, MessageCircle, Clock } from '@lucide/astro';
+
+const estacion = (await getEntry('estacion', 'ruta27'))?.data;
+const year = new Date().getFullYear();
+const comoLlegar = estacion ? comoLlegarUrl(estacion.geo) : '#';
+const telHref = estacion ? `tel:${estacion.telefono.replace(/[^+\d]/g, '')}` : '#';
+const waHref = estacion
+  ? `https://wa.me/${estacion.whatsapp}?text=${encodeURIComponent('Hola, quisiera información sobre Ruta 27.')}`
+  : '#';
+
+// Redes de la estación (en la demo apuntan a "#"; el cliente las completa).
+const redes = [
+  { id: 'facebook', label: 'Facebook', url: estacion?.redes.facebook },
+  { id: 'instagram', label: 'Instagram', url: estacion?.redes.instagram },
+  { id: 'tiktok', label: 'TikTok', url: estacion?.redes.tiktok },
+] as const;
+
+// Glifos de marca para redes: inline porque Lucide ya no incluye iconos de marca (§8).
+// Monocromos (currentColor) para no romper la coherencia "una sola familia visible".
+const SOCIAL_SVG: Record<string, string> = {
+  facebook:
+    '<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M14 9h3l.4-3H14V4.3c0-.9.3-1.5 1.6-1.5H17V.1C16.7.1 15.7 0 14.6 0 12.1 0 10.5 1.5 10.5 4.3V6H7.6v3h2.9v9H14V9Z"/></svg>',
+  instagram:
+    '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.3" cy="6.7" r="1"/></svg>',
+  tiktok:
+    '<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.5 2c.3 2.1 1.5 3.7 3.5 4v3c-1.4 0-2.7-.4-3.8-1.1v6.4a6 6 0 1 1-6-6c.3 0 .6 0 .9.1v3.1a3 3 0 1 0 2.1 2.9V2h3.3Z"/></svg>',
+};
+---
+
+<footer class="footer-brand relative z-10 mt-24 sm:mt-28">
+  <Container size="wide" class="py-16 sm:py-20">
+    <div class="grid gap-12 md:grid-cols-12">
+      <!-- Marca -->
+      <div class="md:col-span-5">
+        <a href="#inicio" class="font-display text-h2 leading-none font-semibold text-ink">
+          Ruta 27
+        </a>
+        <p class="mt-4 max-w-sm text-body text-ink-muted">
+          {estacion?.eslogan ?? 'Energía para seguir tu ruta'}. Tu estación en la Autopista Duarte,
+          abierta 24/7 con precio justo en&nbsp;RD$.
+        </p>
+
+        <ul class="mt-7 flex items-center gap-3" aria-label="Redes sociales">
+          {
+            redes.map((red) => (
+              <li>
+                <a
+                  href={red.url && red.url !== '#' ? red.url : '#'}
+                  target={red.url && red.url !== '#' ? '_blank' : undefined}
+                  rel={red.url && red.url !== '#' ? 'noopener noreferrer' : undefined}
+                  aria-label={red.label}
+                  class="inline-flex size-10 items-center justify-center rounded-sm border border-line text-ink-muted transition duration-200 hover:border-line-strong hover:text-ink"
+                >
+                  <span set:html={SOCIAL_SVG[red.id]} />
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <!-- Explora -->
+      <nav class="md:col-span-3" aria-label="Pie — navegación">
+        <p class="text-eyebrow font-semibold tracking-[0.12em] text-accent-text uppercase">
+          Explora
+        </p>
+        <ul class="mt-5 flex flex-col gap-3">
+          {
+            NAV_ITEMS.map((item) => (
+              <li>
+                <a
+                  href={item.href}
+                  class="text-body text-ink-muted transition-colors hover:text-ink"
+                >
+                  {item.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+
+      <!-- Contacto -->
+      <div class="md:col-span-4">
+        <p class="text-eyebrow font-semibold tracking-[0.12em] text-accent-text uppercase">
+          Contacto
+        </p>
+        <ul class="mt-5 flex flex-col gap-4 text-body text-ink-muted">
+          <li class="flex gap-3">
+            <MapPin size={19} class="mt-0.5 shrink-0 text-ink" aria-hidden="true" />
+            <a href={comoLlegar} target="_blank" rel="noopener noreferrer" class="hover:text-ink">
+              {estacion?.direccion}
+            </a>
+          </li>
+          <li class="flex gap-3">
+            <Phone size={19} class="mt-0.5 shrink-0 text-ink" aria-hidden="true" />
+            <a href={telHref} class="hover:text-ink">{estacion?.telefono}</a>
+          </li>
+          <li class="flex gap-3">
+            <MessageCircle size={19} class="mt-0.5 shrink-0 text-ink" aria-hidden="true" />
+            <a href={waHref} target="_blank" rel="noopener noreferrer" class="hover:text-ink">
+              WhatsApp
+            </a>
+          </li>
+          <li class="flex gap-3">
+            <Clock size={19} class="mt-0.5 shrink-0 text-ink" aria-hidden="true" />
+            <span>Abierto 24 horas, todos los días</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Barra inferior: legal + disclaimer de demo (§2) -->
+    <div
+      class="mt-14 flex flex-col gap-4 border-t border-line pt-8 text-small text-ink-muted sm:mt-16"
+    >
+      <div class="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+        <p>© {year} Ruta 27 — Estación de Servicio. RNC {estacion?.rnc}.</p>
+        <p>Autopista Duarte Km 8, Santiago de los Caballeros, RD.</p>
+      </div>
+      <p class="max-w-3xl text-ink-muted/90">
+        Sitio demostrativo de portafolio. «Ruta 27» es una marca ficticia; datos, precios e imágenes
+        son ilustrativos.
+      </p>
+    </div>
+  </Container>
+</footer>
+
+<style>
+  /* Isla de tema fija: el pie es siempre verde petróleo en claro y oscuro. Se reasignan los
+     tokens semánticos para que las utilidades hereden la paleta correcta (texto bone sobre
+     verde, bordes y ámbar legibles). Todo deriva de primitivos de tokens.css (sin HEX). */
+  .footer-brand {
+    background-color: var(--color-petrol-900);
+    --ink: var(--color-bone-50);
+    --ink-muted: color-mix(in oklab, var(--color-bone-50) 72%, transparent);
+    --border: color-mix(in oklab, var(--color-bone-50) 16%, transparent);
+    --border-strong: color-mix(in oklab, var(--color-bone-50) 34%, transparent);
+    --accent-text: var(--color-amber-400);
+    color: var(--color-bone-50);
+  }
+</style>

@@ -1,0 +1,73 @@
+---
+/**
+ * Header.astro — cabecera sticky del sitio (§9.1).
+ * Logo + navegación ancla (escritorio) + ThemeToggle + CTA "Cómo llegar". En móvil, la
+ * navegación se colapsa en la isla MenuMovil (client:idle, accesible). `backdrop-filter` se
+ * permite SOLO aquí y en modales (§3 tell #7); el resto son superficies sólidas.
+ */
+import { getEntry } from 'astro:content';
+import Container from '../ui/Container.astro';
+import ThemeToggle from '../interactive/ThemeToggle.tsx';
+import MenuMovil from '../interactive/MenuMovil.tsx';
+import { NAV_ITEMS, comoLlegarUrl } from '../../config/nav';
+import { MapPin } from '@lucide/astro';
+
+const estacion = (await getEntry('estacion', 'ruta27'))?.data;
+const comoLlegar = estacion ? comoLlegarUrl(estacion.geo) : '#';
+---
+
+<header
+  class="sticky top-0 z-50 border-b border-line bg-surface/85 backdrop-blur-md supports-[backdrop-filter]:bg-surface/72"
+>
+  <Container size="wide" class="flex h-[var(--header-h)] items-center justify-between gap-4">
+    <!-- Logo → vuelve al inicio -->
+    <a
+      href="#inicio"
+      class="font-display text-h3 leading-none font-semibold text-brand transition-opacity hover:opacity-80"
+    >
+      Ruta 27
+    </a>
+
+    <!-- Navegación de escritorio -->
+    <nav aria-label="Principal" class="hidden lg:block">
+      <ul class="flex items-center gap-7">
+        {
+          NAV_ITEMS.map((item) => (
+            <li>
+              <a
+                href={item.href}
+                class="group relative inline-block py-2 text-small font-medium text-ink-muted transition-colors hover:text-ink"
+              >
+                {item.label}
+                <span class="absolute inset-x-0 -bottom-px h-0.5 origin-left scale-x-0 bg-accent transition-transform duration-200 ease-out-soft group-hover:scale-x-100" />
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div class="flex items-center gap-2.5">
+      <ThemeToggle client:idle />
+
+      <!-- CTA: indicaciones a la estación (abre Google Maps) -->
+      <a
+        href={comoLlegar}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="hidden items-center gap-2 rounded-sm bg-accent px-4 py-2.5 text-small font-semibold whitespace-nowrap text-on-accent shadow-1 transition duration-200 ease-spring hover:shadow-3 motion-safe:hover:-translate-y-0.5 motion-safe:active:translate-y-0 sm:inline-flex"
+      >
+        <MapPin size={17} aria-hidden="true" /> Cómo llegar
+      </a>
+
+      <!-- Menú móvil (isla): visible por debajo de lg -->
+      <MenuMovil
+        client:idle
+        items={NAV_ITEMS}
+        ctaHref={comoLlegar}
+        ctaLabel="Cómo llegar"
+        class="lg:hidden"
+      />
+    </div>
+  </Container>
+</header>

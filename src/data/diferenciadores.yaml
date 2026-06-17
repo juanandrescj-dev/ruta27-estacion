@@ -1,0 +1,25 @@
+# diferenciadores.yaml — "por qué elegirnos" (editable por el cliente).
+# `icono` es una clave SEMÁNTICA (no el nombre del componente): la sección la mapea a un icono
+# Lucide. Mantiene los datos desacoplados de la librería de iconos, igual que servicios.yaml.
+# icono ∈ galon | horario | calidad | ubicacion
+# `orden`: controla la posición (getCollection ordena por id alfabético; orden lo sobreescribe).
+- id: galon-exacto
+  orden: 1
+  titulo: 'Despacho a galón exacto'
+  descripcion: 'Surtidores calibrados y a la vista. Lo que marca la bomba es lo que recibe tu tanque: aquí llenas tranquilo.'
+  icono: galon
+- id: siempre-abierto
+  orden: 2
+  titulo: 'Abierto 24/7, de verdad'
+  descripcion: 'Mismo personal, mismo servicio y mismas luces encendidas a cualquier hora, todos los días del año.'
+  icono: horario
+- id: calidad-certificada
+  orden: 3
+  titulo: 'Calidad certificada'
+  descripcion: 'Combustible que cumple la norma dominicana, almacenado y filtrado con control, para que tu motor lo agradezca.'
+  icono: calidad
+- id: a-pie-de-carretera
+  orden: 4
+  titulo: 'En plena Autopista Duarte'
+  descripcion: 'Entrada y salida amplias en el Km 8 de Santiago: paras, tanqueas y sigues tu ruta sin perder tiempo.'
+  icono: ubicacion

@@ -1,0 +1,31 @@
+# combustibles.yaml — lista de combustibles y precios (editable por el cliente).
+# Precios ilustrativos (ronda jun-2026, RD). SIEMPRE con `vigencia` y nota "actualizado al…".
+# `swatch` referencia un TOKEN de marca (no un HEX): así nada de color se hardcodea (§3).
+# swatch ∈ brand | brand-strong | accent | accent-text | signal
+- id: gasolina-premium
+  nombre: 'Gasolina Premium'
+  octanaje: 95
+  precioRD: 290.10
+  vigencia: 2026-06-14
+  swatch: brand
+- id: gasolina-regular
+  nombre: 'Gasolina Regular'
+  octanaje: 87
+  precioRD: 272.50
+  vigencia: 2026-06-14
+  swatch: brand-strong
+- id: gasoil-optimo
+  nombre: 'Gasoil Óptimo'
+  precioRD: 247.20
+  vigencia: 2026-06-14
+  swatch: accent
+- id: gasoil-regular
+  nombre: 'Gasoil Regular'
+  precioRD: 230.00
+  vigencia: 2026-06-14
+  swatch: accent-text
+- id: glp
+  nombre: 'GLP (gas)'
+  precioRD: 147.60
+  vigencia: 2026-06-14
+  swatch: signal

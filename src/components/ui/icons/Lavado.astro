@@ -1,0 +1,38 @@
+---
+/**
+ * Lavado.astro — icono de dominio (lavado de autos): carro + gotas de agua.
+ * SVG inline propio a 24×24, stroke 1.75 redondo para igualar a Lucide (§8).
+ */
+interface Props {
+  size?: number;
+  title?: string;
+  class?: string;
+}
+const { size = 24, title, class: className } = Astro.props;
+---
+
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="1.75"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  class={className}
+  role={title ? 'img' : undefined}
+  aria-label={title}
+  aria-hidden={title ? undefined : 'true'}
+>
+  {title && <title>{title}</title>}
+  <!-- Gotas de agua -->
+  <path d="M6.5 3c-.9 1-1.4 1.8-1.4 2.5a1.4 1.4 0 0 0 2.8 0C7.9 4.8 7.4 4 6.5 3Z"></path>
+  <path d="M12 2.5c-.9 1-1.4 1.8-1.4 2.5a1.4 1.4 0 0 0 2.8 0C13.4 4.3 12.9 3.5 12 2.5Z"></path>
+  <path d="M17.5 3c-.9 1-1.4 1.8-1.4 2.5a1.4 1.4 0 0 0 2.8 0c0-.7-.5-1.5-1.4-2.5Z"></path>
+  <!-- Carro -->
+  <path d="M3 16.5 4.4 11.9A2 2 0 0 1 6.3 10.5h7.4a2 2 0 0 1 1.9 1.4L17 16.5"></path>
+  <line x1="2.5" y1="16.5" x2="17.5" y2="16.5"></line>
+  <circle cx="6.5" cy="18" r="1.4"></circle>
+  <circle cx="13.5" cy="18" r="1.4"></circle>
+</svg>

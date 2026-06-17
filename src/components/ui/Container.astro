@@ -1,0 +1,26 @@
+---
+/**
+ * Container.astro — envoltura de ancho máximo con padding horizontal responsive.
+ * Centraliza el ritmo horizontal del sitio (mobile-first). No define color ni vertical.
+ */
+import type { HTMLTag } from 'astro/types';
+import { cn } from '../../lib/utils/cn';
+
+interface Props {
+  as?: HTMLTag;
+  size?: 'narrow' | 'default' | 'wide';
+  class?: string;
+}
+
+const { as: Tag = 'div', size = 'default', class: className } = Astro.props;
+
+const sizes: Record<NonNullable<Props['size']>, string> = {
+  narrow: 'max-w-3xl',
+  default: 'max-w-6xl',
+  wide: 'max-w-[88rem]',
+};
+---
+
+<Tag class={cn('mx-auto w-full px-5 sm:px-8 lg:px-10', sizes[size], className)}>
+  <slot />
+</Tag>

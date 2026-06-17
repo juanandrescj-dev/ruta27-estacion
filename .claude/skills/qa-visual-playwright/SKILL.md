@@ -13,6 +13,12 @@ description: >-
 Objetivo: cerrar el loop _"generé UI → la vi y mido que está bien"_ en los breakpoints y
 temas reales. Requiere el **MCP de Playwright** instalado (`/mcp` debe listar `playwright`).
 
+> **Relación con otras skills:** esta es la **receta rápida** de QA visual (matriz fija
+> 3 breakpoints × 2 temas + tabla PASA/FALLA). El **motor completo** de Playwright MCP (todas
+> las tools, recetas de interacción, consola/red, performance) está en la skill
+> [`playwright-mcp`]. Para una mejora responsive a fondo por dispositivo, usa
+> [`responsive-audit`]; para auditoría de calidad transversal, [`quality-audit`].
+
 ## Procedimiento
 
 1. **Arranca el servidor.** Prefiere el build real cuando pruebes CSP/preview:

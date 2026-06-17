@@ -1,35 +1,205 @@
 /*
- * tokens.css — TOKENS BASE (Fase 0)
+ * tokens.css — SISTEMA DE DISEÑO "Ruta 27" · FUENTE ÚNICA DE VERDAD (§6, §7 del plan)
+ * ─────────────────────────────────────────────────────────────────────────────────────
+ * Ningún color, radio, sombra, espaciado o tamaño tipográfico debe escribirse "a mano"
+ * fuera de este archivo. Todo lo demás (componentes, secciones, /styleguide) consume estos
+ * tokens, ya sea por utilidades de Tailwind (`bg-surface`, `text-ink`, `shadow-2`,
+ * `rounded-lg`, `text-display`…) o por `var(--token)` en bloques <style>.
  *
- * Esto es solo el subconjunto mínimo de la paleta de marca para que el placeholder
- * "próximamente" se vea on-brand y el modo claro/oscuro funcione. El sistema de
- * diseño COMPLETO (3 capas en OKLCH con @theme + @theme inline, espaciado, radios,
- * sombras y tipografía — §6 y §7 del PLAN) se implementa en la Fase 1.
+ * Regla anti-IA (§3): CERO morado/índigo. Paleta verde-petróleo + ámbar de señalización
+ * vial + blanco roto. Nada de #FFF/#000 puros como texto/fondo. Dark mode por LUMINOSIDAD
+ * (no inversión): las superficies elevadas se ACLARAN.
  *
- * Regla anti-IA (§3): cero morado/índigo. Paleta verde-petróleo + ámbar de
- * señalización vial. Ningún color se hardcodea fuera de este archivo.
+ * ── Las 3 capas (§7) ──────────────────────────────────────────────────────────────────
+ *   1. PRIMITIVOS  →  `@theme` (estático, en OKLCH). Paleta cruda. No cambian por tema.
+ *   2. SEMÁNTICOS  →  `:root` / [data-theme] (cambian por tema). Mapean rol → primitivo.
+ *   3. PUENTE      →  `@theme inline`. Expone los semánticos como utilidades de Tailwind.
+ *
+ *   ⚠️ El `inline` de la capa 3 es OBLIGATORIO. Sin él, Tailwind "congela" el valor en build
+ *      y `bg-surface` no cambiaría en runtime al alternar `data-theme` (bug silencioso).
+ *      Con `inline`, la utilidad compila a `background-color: var(--surface)` (referencia
+ *      viva) y el dark mode reacciona al instante.
  */
 
-:root {
-  /* Modo claro (§6.1) */
-  --bg: #f7f5f0; /* blanco roto cálido, no #fff puro */
-  --surface: #ffffff;
-  --brand: #0e3b32; /* verde petróleo */
-  --accent: #f4a521; /* ámbar señalización */
-  --accent-text: #c9821a; /* ámbar para texto (pasa contraste AA) */
-  --ink: #1a201d; /* texto principal, no #000 puro */
-  --ink-muted: #5c645f;
-  --border: #ddd7cc;
+/* ══════════════════════════════════════════════════════════════════════════════════════
+ * CAPA 1 — PRIMITIVOS (estáticos, OKLCH). Comentario = HEX canónico §6.1 (para casar con
+ * las fotos de Gemini, cuyos prompts citan los mismos HEX).
+ * ════════════════════════════════════════════════════════════════════════════════════ */
+@theme {
+  /* ── Verde petróleo (marca) ── */
+  --color-petrol-900: oklch(31.92% 0.0509 176.85); /* #0E3B32 marca (claro) */
+  --color-petrol-700: oklch(40.92% 0.0678 177.88); /* #13564A hover marca   */
+  --color-petrol-400: oklch(66.57% 0.1066 171.69); /* #3FA98C marca (oscuro) */
+
+  /* ── Verde-carbón cálido (superficies dark; elevar = aclarar) ── */
+  --color-carbon-950: oklch(18.47% 0.016 173.8); /* #0B1512 fondo dark      */
+  --color-carbon-900: oklch(22.8% 0.0229 171.18); /* #11201B surface dark   */
+  --color-carbon-800: oklch(26.6% 0.0283 168.84); /* #172A23 elevado dark   */
+  --color-carbon-700: oklch(32.68% 0.0323 166.87); /* #243A31 borde dark     */
+
+  /* ── Ámbar de señalización vial (acento) ── */
+  --color-amber-500: oklch(78.06% 0.1588 72.98); /* #F4A521 acento (claro): fills/CTAs   */
+  --color-amber-400: oklch(81.33% 0.1486 77.22); /* #F7B43F acento (oscuro)              */
+  --color-amber-700: oklch(66.51% 0.1375 69.35); /* #C9821A ámbar medio (solo texto GRANDE) */
+  --color-amber-800: oklch(50.85% 0.1025 70.83); /* #8A5A12 ámbar TEXTO pequeño (≥4.5:1 AA) */
+
+  /* ── Rojo-señal (alertas, uso mínimo) ── */
+  --color-signal-500: oklch(60.05% 0.1872 32.91); /* #D9472B fills/iconos/bordes       */
+  --color-red-700: oklch(52.45% 0.1636 33.57); /* #B53A20 rojo TEXTO pequeño claro (AA) */
+  --color-red-400: oklch(74.39% 0.1356 33.65); /* #F58A72 rojo TEXTO pequeño oscuro (AA) */
+
+  /* ── Neutros cálidos (claro) ── */
+  --color-bone-50: oklch(97.03% 0.007 88.64); /* #F7F5F0 fondo (blanco roto) */
+  --color-bone-100: oklch(94.1% 0.0115 84.58); /* #EFEBE3 hundido / inputs   */
+  --color-paper: oklch(100% 0 89.88); /* #FFFFFF cards (claro)              */
+  --color-stone-200: oklch(88.09% 0.0163 82.79); /* #DDD7CC borde (claro)    */
+  --color-ink-900: oklch(23.63% 0.0105 163.92); /* #1A201D texto (claro)     */
+  --color-ink-500: oklch(49.46% 0.0126 158.52); /* #5C645F texto sec (claro) */
+
+  /* ── Neutros (oscuro) ── */
+  --color-ink-50: oklch(94.95% 0.0083 157.09); /* #EAF0EC texto (oscuro)     */
+  --color-ink-300: oklch(71.92% 0.0177 162.56); /* #9BA8A1 texto sec (oscuro) */
+
+  /* ── Tipografía (§6.2) — Clash Display (display) + Switzer (texto). Inter solo fallback ── */
+  --font-display:
+    'Clash Display', 'Switzer', 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI',
+    sans-serif;
+  --font-sans:
+    'Switzer', 'Switzer Fallback', 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI',
+    Roboto, sans-serif;
+
+  /* Escala modular 1.250 (Major Third), base 16px, fluida con clamp() (§6.2) */
+  --text-eyebrow: 0.75rem; /* 12 — "01 / SERVICIOS" */
+  --text-eyebrow--line-height: 1;
+  --text-eyebrow--letter-spacing: 0.12em;
+  --text-small: 0.875rem; /* 14 */
+  --text-small--line-height: 1.5;
+  --text-body: 1rem; /* 16 */
+  --text-body--line-height: 1.65;
+  --text-lead: clamp(1.125rem, 0.6vw + 0.95rem, 1.25rem); /* 18 → 20 */
+  --text-lead--line-height: 1.5;
+  --text-h3: clamp(1.375rem, 1.5vw + 0.7rem, 1.9375rem); /* 22 → 31 */
+  --text-h3--line-height: 1.2;
+  --text-h3--letter-spacing: -0.008em;
+  --text-h2: clamp(1.625rem, 2.4vw + 0.6rem, 2.4375rem); /* 26 → 39 */
+  --text-h2--line-height: 1.14;
+  --text-h2--letter-spacing: -0.012em;
+  --text-h1: clamp(2rem, 4vw + 0.5rem, 3.0625rem); /* 32 → 49 */
+  --text-h1--line-height: 1.07;
+  --text-h1--letter-spacing: -0.018em;
+  --text-display: clamp(2.5rem, 6vw + 1rem, 4.5rem); /* 40 → 72 (hero) */
+  --text-display--line-height: 1.02;
+  --text-display--letter-spacing: -0.022em;
+
+  /* ── Radios contenidos y variados (§6.3) — NO pill por defecto ── */
+  --radius-sm: 6px; /* botones                 */
+  --radius-md: 10px; /* inputs, chips           */
+  --radius-lg: 14px; /* cards                   */
+  --radius-xl: 20px; /* bloques grandes / bento */
+  --radius-full: 999px; /* SOLO badges          */
+
+  /* ── Easings y duraciones (§6.4) — motion artesanal ── */
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1); /* reveals          */
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1); /* overshoot botón */
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════════════
+ * CAPA 2 — SEMÁNTICOS (cambian por tema). Mapean ROL → primitivo.
+ * Light se declara en :root Y en [data-theme="light"] para soportar "islas" de tema
+ * anidadas (p. ej. un panel claro dentro de una página oscura, y viceversa).
+ * ════════════════════════════════════════════════════════════════════════════════════ */
+:root,
+[data-theme='light'] {
+  /* Superficies */
+  --bg: var(--color-bone-50); /* fondo de página            */
+  --surface: var(--color-paper); /* cards                    */
+  --surface-sunken: var(--color-bone-100); /* secciones alternas / inputs */
+  --surface-raised: var(--color-paper); /* elevación (en claro = card) */
+
+  /* Marca y acento */
+  --brand: var(--color-petrol-900);
+  --brand-strong: var(--color-petrol-700); /* hover marca */
+  --accent: var(--color-amber-500); /* CTAs, detalles, numeración */
+  --accent-text: var(--color-amber-800); /* ámbar para TEXTO pequeño (≥4.5:1 sobre fondos claros) */
+  --on-accent: var(--color-ink-900); /* texto sobre ámbar          */
+  --on-brand: var(--color-bone-50); /* texto sobre verde marca    */
+  --signal: var(--color-signal-500);
+  --signal-text: var(--color-red-700); /* rojo para TEXTO pequeño (≥4.5:1) */
+
+  /* Texto y líneas */
+  --ink: var(--color-ink-900);
+  --ink-muted: var(--color-ink-500);
+  --border: var(--color-stone-200);
+  --border-strong: color-mix(in oklab, var(--color-stone-200) 70%, var(--color-ink-900));
+
+  /* Anillo de foco (visible; pasa el 3:1 no-textual de WCAG 2.2 en claro) */
+  --ring: var(--color-amber-800);
+
+  /* Elevaciones direccionales con tinte verde de marca, 3 niveles (§6.3) */
+  --elev-1: 0 1px 2px rgb(14 59 50 / 0.06);
+  --elev-2: 0 4px 10px rgb(14 59 50 / 0.08), 0 2px 4px rgb(14 59 50 / 0.05);
+  --elev-3: 0 14px 30px rgb(14 59 50 / 0.12), 0 6px 12px rgb(14 59 50 / 0.07);
 }
 
 [data-theme='dark'] {
-  /* Modo oscuro: no es invertir, son superficies verde-carbón cálidas (§6.1, §7) */
-  --bg: #0b1512; /* verde casi negro, cálido */
-  --surface: #11201b;
-  --brand: #3fa98c; /* verde de marca aclarado para contraste AA */
-  --accent: #f7b43f; /* ámbar sube luminosidad en dark */
-  --accent-text: #f7b43f;
-  --ink: #eaf0ec; /* no #fff puro */
-  --ink-muted: #9ba8a1;
-  --border: #243a31;
+  /* Superficies: elevar = ACLARAR (no inversión) */
+  --bg: var(--color-carbon-950);
+  --surface: var(--color-carbon-900);
+  --surface-sunken: var(--color-carbon-950);
+  --surface-raised: var(--color-carbon-800);
+
+  /* Marca: el verde SUBE luminosidad para contraste AA */
+  --brand: var(--color-petrol-400);
+  --brand-strong: var(--color-petrol-400);
+  --accent: var(--color-amber-400);
+  --accent-text: var(--color-amber-400); /* en dark el ámbar claro ya pasa AA */
+  --on-accent: var(--color-carbon-950);
+  --on-brand: var(--color-carbon-950);
+  --signal: var(--color-signal-500);
+  --signal-text: var(--color-red-400); /* en dark, rojo claro para texto pequeño (AA) */
+
+  --ink: var(--color-ink-50);
+  --ink-muted: var(--color-ink-300);
+  --border: var(--color-carbon-700);
+  --border-strong: color-mix(in oklab, var(--color-carbon-700) 60%, var(--color-ink-50));
+
+  --ring: var(--color-amber-400);
+
+  /* En dark casi no hay sombra: la elevación la dan la superficie más clara + borde 1px.
+     Un glow verde mínimo sustituye a la sombra proyectada. */
+  --elev-1: 0 1px 2px rgb(0 0 0 / 0.3);
+  --elev-2: 0 6px 16px rgb(0 0 0 / 0.36), 0 0 0 1px rgb(63 169 140 / 0.06);
+  --elev-3: 0 18px 40px rgb(0 0 0 / 0.45), 0 0 0 1px rgb(63 169 140 / 0.08);
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════════════
+ * CAPA 3 — PUENTE A TAILWIND (`@theme inline`, OBLIGATORIO).
+ * Expone los semánticos como utilidades (`bg-surface`, `text-ink`, `border-line`,
+ * `shadow-2`…) que referencian la var VIVA → reaccionan al cambio de `data-theme`.
+ * ════════════════════════════════════════════════════════════════════════════════════ */
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-sunken: var(--surface-sunken);
+  --color-surface-raised: var(--surface-raised);
+
+  --color-brand: var(--brand);
+  --color-brand-strong: var(--brand-strong);
+  --color-accent: var(--accent);
+  --color-accent-text: var(--accent-text);
+  --color-on-accent: var(--on-accent);
+  --color-on-brand: var(--on-brand);
+  --color-signal: var(--signal);
+  --color-signal-text: var(--signal-text);
+
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-line: var(--border);
+  --color-line-strong: var(--border-strong);
+  --color-ring: var(--ring);
+
+  /* Elevaciones → utilidades shadow-1/2/3 (nombre distinto de --elev-* para no auto-referenciar) */
+  --shadow-1: var(--elev-1);
+  --shadow-2: var(--elev-2);
+  --shadow-3: var(--elev-3);
 }

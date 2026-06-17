@@ -1,0 +1,75 @@
+---
+/**
+ * Servicios.astro — qué ofrece la estación (#servicios). Lista editorial a dos columnas (no
+ * un grid de cards clónicas, §3 tell #5): cada servicio es una fila con su icono en un tile y
+ * el texto al lado, numerada. Mezcla iconos de DOMINIO (SVG propios) y Lucide, unificando el
+ * grosor de trazo a 1.75 por CSS para que se vean de la misma familia (§8).
+ */
+import { getCollection } from 'astro:content';
+import Section from '../ui/Section.astro';
+import Eyebrow from '../ui/Eyebrow.astro';
+import Surtidor from '../ui/icons/Surtidor.astro';
+import Lavado from '../ui/icons/Lavado.astro';
+import GLP from '../ui/icons/GLP.astro';
+import Aire from '../ui/icons/Aire.astro';
+import { Store, Droplets, Coffee, Wifi, Banknote, Bath, PlugZap } from '@lucide/astro';
+
+const servicios = (await getCollection('servicios')).sort((a, b) => a.data.orden - b.data.orden);
+
+// Mapa clave→componente. Dominio (propios) + Lucide para el resto del enum (§8).
+const ICON: Record<string, unknown> = {
+  surtidor: Surtidor,
+  lavado: Lavado,
+  glp: GLP,
+  aire: Aire,
+  tienda: Store,
+  aceite: Droplets,
+  cafe: Coffee,
+  wifi: Wifi,
+  cajero: Banknote,
+  bano: Bath,
+  ev: PlugZap,
+};
+---
+
+<Section
+  id="servicios"
+  space="md"
+  surface="sunken"
+  containerSize="wide"
+  labelledby="servicios-title"
+>
+  <div class="max-w-2xl">
+    <Eyebrow numero="02">Servicios</Eyebrow>
+    <h2 id="servicios-title" class="mt-3 font-display text-h1 font-semibold text-balance">
+      Más que tanquear: todo para seguir la ruta.
+    </h2>
+    <p class="mt-4 text-lead text-ink-muted">
+      Paras por combustible y resuelves de paso. Lo esencial, bien hecho y a cualquier hora.
+    </p>
+  </div>
+
+  <ul class="mt-12 grid gap-x-10 gap-y-9 sm:grid-cols-2">
+    {
+      servicios.map((s, i) => {
+        const Icono = ICON[s.data.icono] as typeof Surtidor;
+        return (
+          <li class="flex gap-5 border-t border-line pt-7">
+            <div class="flex size-14 shrink-0 items-center justify-center rounded-md border border-line bg-surface text-brand shadow-1 [&_svg]:[stroke-width:1.75]">
+              <Icono size={26} />
+            </div>
+            <div class="flex flex-col">
+              <div class="flex items-baseline gap-3">
+                <span class="font-display text-small font-semibold text-accent-text tabular-nums">
+                  {String(i + 1).padStart(2, '0')}
+                </span>
+                <h3 class="font-display text-h3 font-semibold text-ink">{s.data.titulo}</h3>
+              </div>
+              <p class="mt-2 text-body text-ink-muted">{s.data.descripcion}</p>
+            </div>
+          </li>
+        );
+      })
+    }
+  </ul>
+</Section>

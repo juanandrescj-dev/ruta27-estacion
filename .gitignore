@@ -42,3 +42,9 @@ screenshot-proyecto.png
 
 # Capturas de QA generadas por la skill qa-visual-playwright
 qa-screenshots/
+# Artefactos del MCP de Playwright
+.playwright-mcp/
+
+# Claude Code — configuración PERSONAL con secretos y permisos (no versionar).
+# Aquí vive CONTEXT7_API_KEY (env) que .mcp.json expande como ${CONTEXT7_API_KEY}.
+.claude/settings.local.json

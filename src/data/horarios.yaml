@@ -1,0 +1,25 @@
+# horarios.yaml — horario semanal (editable por el cliente).
+# DEBE coincidir con el openingHoursSpecification del JSON-LD (Fase 2).
+# Ruta 27 es 24/7: todos los días `abierto24h: true`. Si algún día tuviera horario acotado,
+# se pondría `abierto24h: false` con `apertura`/`cierre` en formato "HH:MM" (24h).
+- id: lun
+  dia: 'Lunes'
+  abierto24h: true
+- id: mar
+  dia: 'Martes'
+  abierto24h: true
+- id: mie
+  dia: 'Miércoles'
+  abierto24h: true
+- id: jue
+  dia: 'Jueves'
+  abierto24h: true
+- id: vie
+  dia: 'Viernes'
+  abierto24h: true
+- id: sab
+  dia: 'Sábado'
+  abierto24h: true
+- id: dom
+  dia: 'Domingo'
+  abierto24h: true

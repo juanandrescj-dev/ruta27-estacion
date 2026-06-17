@@ -1,0 +1,62 @@
+---
+/**
+ * Button.astro — botón / enlace de acción con jerarquía clara.
+ * Renderiza <a> si recibe `href` (y no está deshabilitado); si no, <button>.
+ * Variantes: primario (ámbar, CTA principal) · secundario (verde marca) · ghost (sutil).
+ * Estados: hover (sube 2px + sombra un nivel), focus-visible (global), active, disabled.
+ * Radio 6px (rounded-sm). Solo transform/opacity/shadow → respeta prefers-reduced-motion.
+ */
+import type { HTMLAttributes } from 'astro/types';
+import { cn } from '../../lib/utils/cn';
+
+// Extiende los atributos HTML reales de <a> (href, target, rel, aria-*, data-*, class…) para que
+// `astro check` detecte atributos mal escritos en vez de tragárselos en `...rest`.
+interface Props extends Omit<HTMLAttributes<'a'>, 'type' | 'href'> {
+  variant?: 'primario' | 'secundario' | 'ghost';
+  size?: 'sm' | 'md' | 'lg';
+  href?: string;
+  type?: 'button' | 'submit' | 'reset';
+  disabled?: boolean;
+}
+
+const {
+  variant = 'primario',
+  size = 'md',
+  href,
+  type = 'button',
+  disabled = false,
+  class: className,
+  ...rest
+}: Props = Astro.props;
+
+const base =
+  'group inline-flex select-none items-center justify-center gap-2 rounded-sm font-sans font-semibold whitespace-nowrap shadow-1 transition duration-200 ease-spring disabled:pointer-events-none disabled:opacity-55 motion-safe:hover:-translate-y-0.5 motion-safe:active:translate-y-0';
+
+const variants = {
+  primario: 'bg-accent text-on-accent hover:shadow-3 active:shadow-1',
+  secundario: 'bg-brand text-on-brand hover:bg-brand-strong hover:shadow-2 active:shadow-1',
+  ghost:
+    'bg-transparent text-brand shadow-none ring-1 ring-line hover:bg-surface-sunken hover:ring-line-strong active:bg-surface',
+} as const;
+
+const sizes = {
+  sm: 'px-3.5 py-2 text-small gap-1.5',
+  md: 'px-5 py-2.5 text-body',
+  lg: 'px-7 py-3.5 text-body',
+} as const;
+
+const classes = cn(base, variants[variant], sizes[size], className);
+const Tag = href && !disabled ? 'a' : 'button';
+---
+
+{
+  Tag === 'a' ? (
+    <a href={href} class={classes} {...rest}>
+      <slot />
+    </a>
+  ) : (
+    <button type={type} disabled={disabled} class={classes} {...rest}>
+      <slot />
+    </button>
+  )
+}

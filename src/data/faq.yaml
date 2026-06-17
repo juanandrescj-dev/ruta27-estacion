@@ -1,0 +1,43 @@
+# faq.yaml — preguntas frecuentes (editable por el cliente).
+# FUENTE ÚNICA del acordeón <details> de la sección FAQ Y del bloque FAQPage JSON-LD: así el
+# dato visible y el dato estructurado nunca se desincronizan (§9.3). Respuestas concretas,
+# derivadas de los datos reales de la estación (horarios, combustibles, servicios) — nada de
+# relleno de marketing.
+# `orden`: controla la posición (getCollection ordena por id alfabético; orden lo sobreescribe).
+- id: horario
+  orden: 1
+  pregunta: '¿En qué horario abre Ruta 27?'
+  respuesta: >-
+    Abrimos las 24 horas, los 7 días de la semana, incluidos feriados. A las 3 de la tarde o a
+    las 3 de la madrugada encuentras el mismo servicio.
+- id: combustibles
+  orden: 2
+  pregunta: '¿Qué combustibles puedo tanquear?'
+  respuesta: >-
+    Gasolina Premium (95 octanos) y Regular (87), Gasoil Óptimo y Gasoil Regular, además de GLP
+    (gas propano) despachado a galón exacto.
+- id: precios
+  orden: 3
+  pregunta: '¿Los precios son los oficiales?'
+  respuesta: >-
+    Sí. Seguimos la tarifa semanal que publica el Ministerio de Industria, Comercio y Mipymes; en
+    el sitio verás la fecha de vigencia junto a cada precio.
+- id: pago
+  orden: 4
+  pregunta: '¿Cómo puedo pagar?'
+  respuesta: >-
+    Recibimos efectivo en RD$ y las principales tarjetas de débito y crédito en todos los
+    surtidores. Pregunta al despachador si necesitas factura con tu RNC.
+- id: servicios
+  orden: 5
+  pregunta: '¿Qué servicios hay además de combustible?'
+  respuesta: >-
+    Tienda de conveniencia 24/7, lavado de autos, aire y agua sin costo para clientes, cambio de
+    aceite y lubricantes, GLP y una cafetería con café dominicano recién colado.
+- id: ubicacion
+  orden: 6
+  pregunta: '¿Dónde están y cómo llego?'
+  respuesta: >-
+    Estamos en la Autopista Duarte Km 8, Santiago de los Caballeros, a pie de carretera y fácil de
+    entrar saliendo o entrando a la ciudad. Puedes abrir la ruta en Google Maps o Waze desde la
+    sección de ubicación.

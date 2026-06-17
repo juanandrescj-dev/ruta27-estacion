@@ -1,0 +1,323 @@
+---
+/**
+ * Contacto.astro — formulario de contacto (#contacto). Asimétrico 5/7:
+ * - Izquierda (5/12): Canales de contacto directos (WhatsApp primario, teléfono y redes).
+ * - Derecha (7/12): Formulario Web3Forms con honeypot, labels accesibles, autocomplete
+ *   y envío asíncrono (fetch) con feedback accesible (aria-live).
+ */
+import { getEntry } from 'astro:content';
+import Section from '../ui/Section.astro';
+import Eyebrow from '../ui/Eyebrow.astro';
+import Button from '../ui/Button.astro';
+import { Phone, MessageCircle } from '@lucide/astro';
+
+const estacionEntry = await getEntry('estacion', 'ruta27');
+const estacion = estacionEntry?.data;
+
+if (!estacion) {
+  throw new Error('No se encontraron datos de la estación en la colección.');
+}
+
+const { telefono, whatsapp, redes } = estacion;
+const waText = encodeURIComponent('Hola, quisiera ponerme en contacto con Ruta 27.');
+const waHref = `https://wa.me/${whatsapp}?text=${waText}`;
+
+// Web3Forms access key leída de variable de entorno pública
+const accessKey = import.meta.env.PUBLIC_WEB3FORMS_ACCESS_KEY || '';
+---
+
+<Section id="contacto" space="xl" containerSize="wide" labelledby="contacto-title">
+  <div class="grid gap-10 lg:grid-cols-12 lg:gap-14">
+    <!-- Canales de contacto directos: 5/12 -->
+    <div class="flex flex-col justify-center lg:col-span-5">
+      <Eyebrow numero="08">Contacto</Eyebrow>
+      <h2 id="contacto-title" class="mt-3 font-display text-h1 font-semibold text-balance">
+        Conéctate con nuestro equipo.
+      </h2>
+      <p class="mt-5 text-lead text-ink-muted">
+        Estamos a tu disposición para cualquier duda, sugerencia o consulta sobre nuestros
+        servicios. Escríbenos directamente o utiliza el formulario.
+      </p>
+
+      {/* Canal primario: WhatsApp */}
+      <div class="mt-8">
+        <Button
+          href={waHref}
+          variant="primario"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex w-full items-center justify-center sm:w-auto"
+        >
+          <MessageCircle size={20} class="mr-2 shrink-0" aria-hidden="true" />
+          Escríbenos por WhatsApp
+        </Button>
+      </div>
+
+      {/* Canales secundarios */}
+      <div class="mt-10 flex flex-col gap-6 border-t border-line pt-8">
+        <a
+          href={`tel:${telefono}`}
+          class="group flex items-center gap-4 text-ink transition duration-200 hover:text-brand"
+        >
+          <span
+            class="flex size-11 items-center justify-center rounded-sm border border-line bg-surface transition duration-200 group-hover:border-line-strong group-hover:bg-surface-sunken"
+          >
+            <Phone size={18} class="text-accent-text" aria-hidden="true" />
+          </span>
+          <div>
+            <span class="block text-eyebrow tracking-[0.1em] text-ink-muted uppercase"
+              >Teléfono de atención</span
+            >
+            <span class="font-display text-body font-semibold tabular-nums">{telefono}</span>
+          </div>
+        </a>
+
+        {
+          redes && (
+            <div>
+              <span class="mb-3.5 block text-eyebrow tracking-[0.1em] text-ink-muted uppercase">
+                Síguenos en redes
+              </span>
+              <div class="flex gap-3">
+                {redes.facebook && (
+                  <a
+                    href={redes.facebook}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Síguenos en Facebook"
+                    class="flex size-10 items-center justify-center rounded-sm border border-line bg-surface transition duration-200 hover:border-line-strong hover:text-brand"
+                  >
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.75"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      class="size-[18px]"
+                      aria-hidden="true"
+                    >
+                      <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
+                    </svg>
+                  </a>
+                )}
+                {redes.instagram && (
+                  <a
+                    href={redes.instagram}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Síguenos en Instagram"
+                    class="flex size-10 items-center justify-center rounded-sm border border-line bg-surface transition duration-200 hover:border-line-strong hover:text-brand"
+                  >
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.75"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      class="size-[18px]"
+                      aria-hidden="true"
+                    >
+                      <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+                      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                      <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
+                    </svg>
+                  </a>
+                )}
+                {redes.tiktok && (
+                  <a
+                    href={redes.tiktok}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Síguenos en TikTok"
+                    class="flex size-10 items-center justify-center rounded-sm border border-line bg-surface transition duration-200 hover:border-line-strong hover:text-brand"
+                  >
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                      class="size-[18px]"
+                      aria-hidden="true"
+                    >
+                      <path d="M12.53.07a8 8 0 0 1 .18 1.7 5.2 5.2 0 0 0 3.3-1A5 5 0 0 0 17 0V4.4a8.2 8.2 0 0 1-4.4-1.2 5.2 5.2 0 0 1-.07 5.6 5 5 0 0 1-5-1.4V12a8 8 0 0 0 13.5 5.7V8.8A9.3 9.3 0 0 0 24 12v-4.4a5 5 0 0 1-3.3-1.6 8 8 0 0 1-.07-5.9h-4.4V12a3.6 3.6 0 0 1-6.1 2.5 3.6 3.6 0 0 1 2.5-6.1V4A8 8 0 0 0 4.1 12 8 8 0 0 0 12.5.07Z" />
+                    </svg>
+                  </a>
+                )}
+              </div>
+            </div>
+          )
+        }
+      </div>
+    </div>
+
+    <!-- Formulario de contacto: 7/12 -->
+    <div class="lg:col-span-7">
+      <div class="rounded-lg border border-line bg-surface p-7 shadow-2 sm:p-10">
+        <form
+          id="contact-form"
+          method="POST"
+          action="https://api.web3forms.com/submit"
+          class="flex flex-col gap-6"
+        >
+          <input type="hidden" name="access_key" value={accessKey} />
+
+          {/* Honeypot anti-spam */}
+          <input
+            type="checkbox"
+            name="botcheck"
+            class="hidden"
+            style="display: none;"
+            tabindex="-1"
+            aria-hidden="true"
+          />
+
+          {/* Nombre */}
+          <div class="flex flex-col gap-2">
+            <label for="form-name" class="font-display text-small font-semibold text-ink">
+              Nombre completo
+            </label>
+            <input
+              type="text"
+              id="form-name"
+              name="name"
+              required
+              autocomplete="name"
+              placeholder="Ej. Juan Pérez"
+              aria-invalid="false"
+              class="w-full rounded-md border border-line bg-surface-sunken px-4 py-3 text-body text-ink transition duration-200 placeholder:text-ink-muted/50 focus:border-line-strong focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:outline-none"
+            />
+          </div>
+
+          {/* Correo */}
+          <div class="flex flex-col gap-2">
+            <label for="form-email" class="font-display text-small font-semibold text-ink">
+              Correo electrónico
+            </label>
+            <input
+              type="email"
+              id="form-email"
+              name="email"
+              required
+              autocomplete="email"
+              placeholder="juan.perez@correo.com"
+              aria-invalid="false"
+              class="w-full rounded-md border border-line bg-surface-sunken px-4 py-3 text-body text-ink transition duration-200 placeholder:text-ink-muted/50 focus:border-line-strong focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:outline-none"
+            />
+          </div>
+
+          {/* Teléfono */}
+          <div class="flex flex-col gap-2">
+            <label for="form-phone" class="font-display text-small font-semibold text-ink">
+              Teléfono (opcional)
+            </label>
+            <input
+              type="tel"
+              id="form-phone"
+              name="phone"
+              autocomplete="tel"
+              placeholder="Ej. 809-000-0000"
+              aria-invalid="false"
+              class="w-full rounded-md border border-line bg-surface-sunken px-4 py-3 text-body text-ink transition duration-200 placeholder:text-ink-muted/50 focus:border-line-strong focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:outline-none"
+            />
+          </div>
+
+          {/* Mensaje */}
+          <div class="flex flex-col gap-2">
+            <label for="form-message" class="font-display text-small font-semibold text-ink">
+              Tu mensaje
+            </label>
+            <textarea
+              id="form-message"
+              name="message"
+              required
+              rows="4"
+              placeholder="Cuéntanos en qué podemos ayudarte..."
+              aria-invalid="false"
+              class="min-h-[100px] w-full resize-y rounded-md border border-line bg-surface-sunken px-4 py-3 text-body text-ink transition duration-200 placeholder:text-ink-muted/50 focus:border-line-strong focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:outline-none"
+            ></textarea>
+          </div>
+
+          {/* Botón de envío */}
+          <div class="mt-2">
+            <button
+              type="submit"
+              id="form-submit"
+              class="inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-sm bg-brand px-6 py-3.5 font-sans font-semibold text-on-brand shadow-1 transition duration-200 ease-spring hover:-translate-y-0.5 hover:shadow-3 active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              Enviar mensaje
+            </button>
+          </div>
+
+          {/* Feedback accesible */}
+          <div id="form-status" aria-live="polite" class="mt-2 hidden text-small font-semibold">
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</Section>
+
+<script>
+  const form = document.getElementById('contact-form') as HTMLFormElement | null;
+  const statusDiv = document.getElementById('form-status') as HTMLDivElement | null;
+  const submitBtn = document.getElementById('form-submit') as HTMLButtonElement | null;
+
+  if (form && statusDiv && submitBtn) {
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      // Limpiar estados anteriores
+      statusDiv.classList.remove('hidden', 'text-brand', 'text-signal-text');
+      statusDiv.textContent = 'Enviando mensaje...';
+      statusDiv.classList.add('text-brand');
+      statusDiv.classList.remove('hidden');
+      submitBtn.disabled = true;
+
+      // Reseteamos aria-invalid
+      const inputs = form.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>(
+        'input[required], textarea[required]',
+      );
+      inputs.forEach((input) => input.setAttribute('aria-invalid', 'false'));
+
+      const formData = new FormData(form);
+
+      // Verificamos honeypot
+      const botcheck = formData.get('botcheck');
+      if (botcheck) {
+        // Ignoramos silenciosamente si es un bot
+        statusDiv.textContent = '¡Mensaje enviado con éxito!';
+        form.reset();
+        submitBtn.disabled = false;
+        return;
+      }
+
+      try {
+        const response = await fetch('https://api.web3forms.com/submit', {
+          method: 'POST',
+          body: formData,
+        });
+
+        const result = await response.json();
+
+        if (response.status === 200 && result.success) {
+          statusDiv.classList.remove('text-signal-text');
+          statusDiv.classList.add('text-brand');
+          statusDiv.textContent = '¡Gracias! Tu mensaje ha sido enviado correctamente.';
+          form.reset();
+        } else {
+          throw new Error(result.message || 'Error al enviar el formulario');
+        }
+      } catch {
+        statusDiv.classList.remove('text-brand');
+        statusDiv.classList.add('text-signal-text');
+        statusDiv.textContent =
+          'Hubo un error al enviar el mensaje. Por favor, intenta de nuevo o escríbenos directamente por WhatsApp.';
+
+        // Marcar campos con aria-invalid ante fallo general o de red
+        inputs.forEach((input) => input.setAttribute('aria-invalid', 'true'));
+      } finally {
+        submitBtn.disabled = false;
+      }
+    });
+  }
+</script>

@@ -1,0 +1,39 @@
+---
+/**
+ * Surtidor.astro — icono de dominio (dispensador de combustible).
+ * SVG inline propio a 24×24, stroke 1.75 + caps/joins redondos para igualar a Lucide (§8).
+ * `title` lo hace accesible (role="img"); sin él es decorativo (aria-hidden).
+ */
+interface Props {
+  size?: number;
+  title?: string;
+  class?: string;
+}
+const { size = 24, title, class: className } = Astro.props;
+---
+
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="1.75"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  class={className}
+  role={title ? 'img' : undefined}
+  aria-label={title}
+  aria-hidden={title ? undefined : 'true'}
+>
+  {title && <title>{title}</title>}
+  <!-- Cuerpo del surtidor -->
+  <rect x="3" y="2.5" width="10" height="19" rx="1.75"></rect>
+  <line x1="2" y1="21.5" x2="14" y2="21.5"></line>
+  <!-- Pantalla / lectura -->
+  <rect x="5.5" y="5" width="5" height="4" rx="0.75"></rect>
+  <line x1="5.75" y1="12.5" x2="10.25" y2="12.5"></line>
+  <line x1="5.75" y1="15" x2="10.25" y2="15"></line>
+  <!-- Brazo de la manguera + boquilla -->
+  <path d="M13 7h2.75a1.75 1.75 0 0 1 1.75 1.75v8a1.5 1.5 0 0 0 3 0v-5.5L18 8.5"></path>
+</svg>

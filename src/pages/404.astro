@@ -1,0 +1,44 @@
+---
+/**
+ * 404.astro — página de error con el sistema de diseño (tokens, dark mode, numeración).
+ * Estática: Cloudflare Pages la sirve como fallback de rutas no encontradas.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Container from '../components/ui/Container.astro';
+import Eyebrow from '../components/ui/Eyebrow.astro';
+import Button from '../components/ui/Button.astro';
+import ThemeToggle from '../components/interactive/ThemeToggle.tsx';
+import { ArrowLeft } from '@lucide/astro';
+---
+
+<BaseLayout
+  title="Página no encontrada"
+  description="La ruta que buscas no existe. Vuelve al inicio de Ruta 27."
+>
+  <header class="absolute inset-x-0 top-0 z-50">
+    <Container size="wide" class="flex items-center justify-between py-5">
+      <a href="/" class="font-display text-h3 leading-none font-semibold text-brand">Ruta 27</a>
+      <ThemeToggle client:idle />
+    </Container>
+  </header>
+
+  <main id="main" class="flex min-h-[100dvh] flex-col justify-center py-28">
+    <Container size="default" class="flex flex-col items-start">
+      <Eyebrow numero="404">Ruta sin salida</Eyebrow>
+      <p class="mt-6 font-display text-display leading-none font-semibold text-brand tabular-nums">
+        404
+      </p>
+      <h1 class="mt-5 max-w-2xl font-display text-h1 font-semibold text-balance">
+        Esta vía no está en el mapa.
+      </h1>
+      <p class="mt-5 max-w-xl text-lead text-ink-muted">
+        La página que buscas se mudó o nunca existió. Regresa al inicio y sigue tu ruta desde ahí.
+      </p>
+      <div class="mt-9">
+        <Button variant="primario" href="/">
+          <ArrowLeft size={18} aria-hidden="true" /> Volver al inicio
+        </Button>
+      </div>
+    </Container>
+  </main>
+</BaseLayout>
