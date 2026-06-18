@@ -104,7 +104,16 @@ function buildHero(): void {
     tl.from(split.words, { yPercent: 45, autoAlpha: 0, stagger: 0.05 }, 0);
   }
   if (steps.length) {
-    tl.from(steps, { y: 18, autoAlpha: 0, stagger: 0.09 }, title ? '-=0.15' : 0);
+    // fromTo con destino EXPLÍCITO (autoAlpha:1). Los `steps` son hijos directos de
+    // [data-hero-intro], que el CSS oculta a opacity:0 bajo `.motion-ready`. Un `.from()`
+    // tomaría ese 0 como estado final (anima 0→0) y los dejaría invisibles; el `.fromTo`
+    // garantiza que terminen visibles, igual que los reveals de scroll (buildReveals).
+    tl.fromTo(
+      steps,
+      { y: 18, autoAlpha: 0 },
+      { y: 0, autoAlpha: 1, stagger: 0.09 },
+      title ? '-=0.15' : 0,
+    );
   }
 }
 
