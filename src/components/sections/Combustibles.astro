@@ -1,9 +1,11 @@
 ---
 /**
  * Combustibles.astro — precios por galón (#combustibles). Bento ASIMÉTRICO (anti-IA §3 tell
- * #5: nada de 3 cards idénticas): la Premium es la card destacada (2×2) y el resto, compactas
- * de pesos distintos. Precios con format.ts (RD$ es-DO) y nota de vigencia (§9.1). El color
- * del "swatch" sale de un TOKEN (var(--brand)…), nunca de un HEX (§3).
+ * #5: nada de 3 cards idénticas): la Premium domina la fila superior (4/6) frente a la Regular
+ * (2/6); los tres combustibles secundarios van en una fila de tercios (2/6 c/u). Cada card es
+ * lo bastante ancha para que el precio (texto display/h2 fluido) NUNCA desborde, ni siquiera a
+ * 1024px (antes iban a 1/6 = ~92px de contenido y los números se salían del borde).
+ * Precios con format.ts (RD$ es-DO) y nota de vigencia (§9.1). El "swatch" sale de un TOKEN.
  */
 import { getCollection } from 'astro:content';
 import Section from '../ui/Section.astro';
@@ -24,13 +26,14 @@ const swatchVar: Record<string, string> = {
   signal: 'var(--signal)',
 };
 
-// Pesos del bento por posición (la primera card domina; el resto varía).
+// Pesos del bento por posición. Fila 1: Premium 4/6 (dominante) + Regular 2/6. Fila 2: los tres
+// secundarios a 2/6 (tercios). Ningún secundario baja de 2/6 → el precio siempre cabe en su card.
 const span = [
-  'sm:col-span-2 lg:col-span-3 lg:row-span-2',
-  'lg:col-span-3',
-  'lg:col-span-1',
-  'lg:col-span-1',
-  'lg:col-span-1',
+  'sm:col-span-2 lg:col-span-4',
+  'lg:col-span-2',
+  'lg:col-span-2',
+  'lg:col-span-2',
+  'lg:col-span-2',
 ];
 ---
 

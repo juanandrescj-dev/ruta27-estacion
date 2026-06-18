@@ -45,7 +45,9 @@
 
   /* ── Rojo-señal (alertas, uso mínimo) ── */
   --color-signal-500: oklch(60.05% 0.1872 32.91); /* #D9472B fills/iconos/bordes       */
-  --color-red-700: oklch(52.45% 0.1636 33.57); /* #B53A20 rojo TEXTO pequeño claro (AA) */
+  --color-red-700: oklch(
+    49.5% 0.1577 33.57
+  ); /* #A6331C rojo TEXTO pequeño claro: ≥4.5:1 también sobre el tinte del badge signal */
   --color-red-400: oklch(74.39% 0.1356 33.65); /* #F58A72 rojo TEXTO pequeño oscuro (AA) */
 
   /* ── Neutros cálidos (claro) ── */

@@ -9,6 +9,60 @@ y el proyecto usa [Versionado Semántico](https://semver.org/lang/es/).
 
 ### Added
 
+- **Fase 6 — QA, accesibilidad, performance y documentación.**
+  - Suite **Playwright**: e2e (`home`, `theme` persiste tras recargar, `contacto` con envío
+    mockeado y caso de error, `galeria` con lightbox operable por teclado), **accesibilidad** con
+    `@axe-core/playwright` (**0 violaciones WCAG 2.2 AA en claro y oscuro**, escaneando la página
+    con movimiento reducido para no omitir contenido con scroll-reveal) y **regresión visual** por
+    snapshots claro/oscuro con _baselines_ Linux reproducibles (generadas en la imagen oficial de
+    Playwright).
+  - **CI** en GitHub Actions (`ci.yml`) en tres trabajos: calidad (lint + `format:check` +
+    `astro check` + build), e2e/a11y/visual dentro de la imagen de Playwright fijada a la versión
+    del proyecto, y presupuesto **Lighthouse** (`lighthouserc.json` + `treosh/lighthouse-ci-action`,
+    métricas estables como error y FCP/TBT/LCP como advertencia, `numberOfRuns: 3`).
+  - **Lighthouse móvil 96 / 100 / 100 / 100** (Performance/Accessibility/Best-Practices/SEO),
+    CLS 0 y TBT 20 ms sobre el build de producción.
+  - Fuentes de marca self-host (**Clash Display** + **Switzer** de Fontshare) añadidas a
+    `public/fonts/`: se eliminan los 404 de consola y el sitio recupera sus dos voces tipográficas.
+  - README profesional (banner, badges reales, stack con porqués, decisiones de diseño, tabla
+    Lighthouse, mención de «Biome evaluado y descartado por cobertura `.astro`») y
+    `.github/PULL_REQUEST_TEMPLATE.md`.
+
+### Fixed
+
+- **(Fase 6)** Contraste WCAG AA de los `Button` primario/secundario: un conflicto de
+  `tailwind-merge` clasificaba `text-on-accent`/`text-on-brand` en el mismo grupo que el
+  `font-size` `text-body` y descartaba el color, dejando el texto en `--ink` (1.3–2.5:1). Se
+  configuró el grupo `font-size` con las escalas custom en `lib/utils/cn.ts`.
+- **(Fase 6)** Placeholders del formulario (`placeholder:text-ink-muted/50` → sólido) para pasar
+  4.5:1; rojo de texto de señal (`--color-red-700`) endurecido para pasar AA también sobre el
+  tinte del badge «Precio sujeto a cambio».
+- **(Fase 6)** `theme-color` del navegador ahora **sigue al tema elegido** (`data-theme`/
+  `localStorage`) en vez del `prefers-color-scheme` del sistema operativo.
+- **(Fase 6)** JSON-LD `GasStation`: `openingHoursSpecification` 24 h en forma canónica
+  (`opens = closes = 00:00`), `name` derivado de `estacion.yaml` y `priceRange` informativo.
+- **(Fase 6)** Detalles a11y/anti-IA: bento de Diferenciadores con pesos visuales distintos,
+  `role="status"` en el feedback del formulario, foco de entrada del lightbox al botón de cierre y
+  `backdrop-filter` retirado de la miniatura de la galería (solo navbar/modales).
+
+### Added (fases previas)
+
+- **Fase 5 — Imágenes y optimización visual.**
+  - Ocho fotografías dirigidas con IA, integradas con `astro:assets` (`<Picture>` AVIF/WebP
+    responsivos): hero con `loading="eager"` + `fetchpriority="high"`, el resto `lazy`.
+  - Galería con _masonry_ ligero y lightbox accesible; `og-image.jpg` 1200×630 y set completo de
+    favicons/manifest, con `theme-color` por tema.
+- **Fase 4 — Motion y microinteracciones.**
+  - GSAP 3 (ScrollTrigger + SplitText) + Lenis: reveals con _stagger_, _split_ de titulares y
+    parallax sutil del hero; View Transitions entre páginas. Todo se desactiva (y ni se descarga)
+    bajo `prefers-reduced-motion: reduce`.
+- **Fase 3 — Mapa, formulario y seguridad.**
+  - Isla `MapaInteractivo` (MapLibre GL v5 + OpenFreeMap, sin API key) con carga diferida por
+    `IntersectionObserver`, estilo sincronizado con el tema, marcador de marca, popup con Google
+    Maps/Waze y fallback accesible si la red falla.
+  - Formulario de contacto Web3Forms (sin backend) con honeypot, `autocomplete`, envío asíncrono y
+    feedback `aria-live`, más WhatsApp como canal primario.
+  - `public/_headers` con CSP endurecida que permite OpenFreeMap y Web3Forms.
 - **Fase 2 — Layout, secciones de contenido y SEO base.**
   - `layout/Header.astro` sticky (logo, nav ancla con subrayado animado, `ThemeToggle`, CTA
     «Cómo llegar») e isla React `MenuMovil` accesible: portal a `<body>` (evita el atrapamiento

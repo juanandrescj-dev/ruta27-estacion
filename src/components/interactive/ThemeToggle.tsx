@@ -21,7 +21,12 @@ const resolve = (theme: Theme): 'light' | 'dark' =>
   theme === 'system' ? (systemPrefersDark() ? 'dark' : 'light') : theme;
 
 const apply = (theme: Theme): void => {
-  document.documentElement.dataset.theme = resolve(theme);
+  const resolved = resolve(theme);
+  document.documentElement.dataset.theme = resolved;
+  // El theme-color del chrome del navegador sigue al tema elegido (mismos valores que el
+  // script anti-FOUC de BaseLayout): verde de marca en claro, fondo oscuro en dark.
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.setAttribute('content', resolved === 'dark' ? '#0b1512' : '#0e3b32');
 };
 
 const META: Record<Theme, { estado: string; accion: string }> = {
