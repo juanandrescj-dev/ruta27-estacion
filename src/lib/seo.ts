@@ -47,8 +47,9 @@ const ORDEN_DIAS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Sat
 
 /**
  * Construye `openingHoursSpecification` a partir de los horarios, agrupando los días que
- * comparten el mismo tramo. Para un día 24h se usa el rango 00:00–23:59 (forma que valida en
- * Rich Results para "abierto las 24 horas").
+ * comparten el mismo tramo. Para un día 24h se emite `opens === closes === '00:00'`, que es la
+ * forma canónica de schema.org/Google para "abierto las 24 horas" (un rango 00:00–23:59 dejaría
+ * el negocio técnicamente cerrado el último minuto).
  */
 export function buildOpeningHours(horarios: DiaHorario[]): OpeningHours[] {
   const grupos = new Map<string, OpeningHours>();
@@ -56,7 +57,7 @@ export function buildOpeningHours(horarios: DiaHorario[]): OpeningHours[] {
     const dia = DIA_SCHEMA[h.id];
     if (!dia) continue;
     const opens = h.abierto24h ? '00:00' : (h.apertura ?? '00:00');
-    const closes = h.abierto24h ? '23:59' : (h.cierre ?? '23:59');
+    const closes = h.abierto24h ? '00:00' : (h.cierre ?? '23:59');
     const clave = `${opens}-${closes}`;
     const existente = grupos.get(clave);
     if (existente) existente.dayOfWeek.push(dia);
@@ -99,12 +100,14 @@ export function buildGasStationJsonLd(opts: {
   const data = {
     '@context': 'https://schema.org',
     '@type': 'GasStation',
-    name: 'Ruta 27 — Estación de Servicio',
+    name: `${estacion.nombre} — Estación de Servicio`,
     description: estacion.descripcion,
     url: absoluteUrl('/', site),
     image: absoluteUrl(imagePath, site),
     telephone: estacion.telefono,
-    priceRange: 'RD$',
+    // priceRange: indicador relativo de coste según convención de Google ('$$' = gama media).
+    // La moneda concreta va en currenciesAccepted ('DOP').
+    priceRange: '$$',
     currenciesAccepted: 'DOP',
     paymentAccepted: 'Efectivo, Tarjeta de débito, Tarjeta de crédito',
     address: postalAddress(estacion.direccion),

@@ -101,7 +101,7 @@ const fulls = await Promise.all(
                 aria-hidden="true"
               />
               <span
-                class="absolute right-3 bottom-3 inline-flex size-9 items-center justify-center rounded-md border border-line bg-surface/90 text-ink opacity-0 backdrop-blur-sm transition-opacity duration-[--dur-base] group-hover:opacity-100"
+                class="absolute right-3 bottom-3 inline-flex size-9 items-center justify-center rounded-md border border-line bg-surface text-ink opacity-0 shadow-1 transition-opacity duration-[--dur-base] group-hover:opacity-100"
                 aria-hidden="true"
               >
                 <Expand size={16} />
@@ -205,7 +205,8 @@ const fulls = await Promise.all(
       lastFocused = document.activeElement as HTMLElement;
       show(i);
       dialog.showModal();
-      btnNext.focus();
+      // Punto de entrada de foco predecible: el botón de cerrar (no «siguiente»).
+      btnClose.focus();
     };
 
     triggers.forEach((t, i) => t.addEventListener('click', () => open(i)));
