@@ -6,11 +6,12 @@
  * la foto real de la Fase 5 entre sin causar CLS. Dos CTAs: "Cómo llegar" + "Ver precios".
  */
 import { getEntry, getCollection } from 'astro:content';
+import { Picture } from 'astro:assets';
 import Container from '../ui/Container.astro';
 import Eyebrow from '../ui/Eyebrow.astro';
 import Button from '../ui/Button.astro';
 import Badge from '../ui/Badge.astro';
-import Surtidor from '../ui/icons/Surtidor.astro';
+import heroImg from '../../assets/images/hero/hero-estacion.jpg';
 import { comoLlegarUrl } from '../../config/nav';
 import { estaAbiertoAhora, type DiaHorario } from '../../lib/utils/horarios';
 import { MapPin, ArrowRight } from '@lucide/astro';
@@ -75,25 +76,32 @@ const estado = estaAbiertoAhora(horarios);
           class="relative aspect-[4/5] overflow-hidden rounded-xl border border-line bg-surface-sunken shadow-2"
           data-hero-parallax
         >
+          <!-- Foto real (LCP): eager + alta prioridad de descarga; AVIF/WebP responsivos. -->
+          <Picture
+            src={heroImg}
+            formats={['avif', 'webp']}
+            widths={[400, 600, 800, 1000, 1280]}
+            sizes="(min-width: 1024px) 40vw, (min-width: 640px) 88vw, 100vw"
+            alt="Estación de servicio Ruta 27 a la hora azul: marquesina iluminada y surtidores encendidos en la Autopista Duarte, Santiago."
+            loading="eager"
+            fetchpriority="high"
+            class="absolute inset-0 h-full w-full object-cover"
+          />
+
+          <!-- Tinte de marca sutil sobre la foto (duotono/cohesión, anti-IA §3 tell #12). -->
+          <div
+            class="pointer-events-none absolute inset-0 bg-gradient-to-tr from-[color-mix(in_oklab,var(--brand)_30%,transparent)] via-transparent to-transparent"
+            aria-hidden="true"
+          >
+          </div>
+
           <!-- Marca de agua editorial -->
           <span
-            class="pointer-events-none absolute top-5 left-5 font-display text-h1 leading-none font-semibold text-ink/12 tabular-nums select-none"
+            class="pointer-events-none absolute top-5 left-5 font-display text-h1 leading-none font-semibold text-paper/60 tabular-nums select-none"
             aria-hidden="true"
           >
             00
           </span>
-
-          <!-- Icono de dominio como marcador del encuadre -->
-          <div class="absolute inset-0 flex items-center justify-center text-brand/25">
-            <Surtidor size={120} />
-          </div>
-
-          <!-- Tinte de marca sutil (duotono provisional; la foto llega en Fase 5) -->
-          <div
-            class="pointer-events-none absolute inset-0 bg-gradient-to-tr from-[color-mix(in_oklab,var(--brand)_18%,transparent)] to-transparent"
-            aria-hidden="true"
-          >
-          </div>
 
           <figcaption
             class="absolute inset-x-0 bottom-0 border-t border-line bg-surface px-5 py-3 text-small text-ink-muted"

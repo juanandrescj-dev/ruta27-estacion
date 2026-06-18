@@ -48,3 +48,7 @@ qa-screenshots/
 # Claude Code — configuración PERSONAL con secretos y permisos (no versionar).
 # Aquí vive CONTEXT7_API_KEY (env) que .mcp.json expande como ${CONTEXT7_API_KEY}.
 .claude/settings.local.json
+
+# Fase 5: originales de Gemini SIN procesar (se versiona solo la versión recortada) y scratch de procesado.
+.gemini-originals/
+tmp-wm/

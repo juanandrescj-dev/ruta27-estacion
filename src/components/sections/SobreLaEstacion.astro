@@ -6,9 +6,10 @@
  * El hueco de imagen reserva su caja para la foto real de la Fase 5.
  */
 import { getCollection } from 'astro:content';
+import { Picture } from 'astro:assets';
 import Section from '../ui/Section.astro';
 import Eyebrow from '../ui/Eyebrow.astro';
-import Lavado from '../ui/icons/Lavado.astro';
+import equipoImg from '../../assets/images/estacion/equipo-atendiendo.jpg';
 
 const numServicios = (await getCollection('servicios')).length;
 
@@ -26,20 +27,27 @@ const datos = [
       <figure
         class="relative aspect-[5/4] overflow-hidden rounded-xl border border-line bg-surface-sunken shadow-2"
       >
+        <Picture
+          src={equipoImg}
+          formats={['avif', 'webp']}
+          widths={[400, 600, 800, 1000, 1280]}
+          sizes="(min-width: 1024px) 40vw, (min-width: 640px) 88vw, 100vw"
+          alt="Empleado de Ruta 27 en uniforme verde y ámbar atendiendo el surtidor con la terminal de pago en mano."
+          loading="lazy"
+          decoding="async"
+          class="absolute inset-0 h-full w-full object-cover"
+        />
+        <div
+          class="pointer-events-none absolute inset-0 bg-gradient-to-bl from-[color-mix(in_oklab,var(--brand)_28%,transparent)] via-transparent to-transparent"
+          aria-hidden="true"
+        >
+        </div>
         <span
-          class="pointer-events-none absolute top-5 left-5 font-display text-h1 leading-none font-semibold text-ink/12 tabular-nums select-none"
+          class="pointer-events-none absolute top-5 left-5 font-display text-h1 leading-none font-semibold text-paper/60 tabular-nums select-none"
           aria-hidden="true"
         >
           03
         </span>
-        <div class="absolute inset-0 flex items-center justify-center text-brand/22">
-          <Lavado size={108} />
-        </div>
-        <div
-          class="pointer-events-none absolute inset-0 bg-gradient-to-bl from-[color-mix(in_oklab,var(--brand)_16%,transparent)] to-transparent"
-          aria-hidden="true"
-        >
-        </div>
         <figcaption
           class="absolute inset-x-0 bottom-0 border-t border-line bg-surface px-5 py-3 text-small text-ink-muted"
         >
