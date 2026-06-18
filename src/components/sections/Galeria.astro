@@ -1,0 +1,237 @@
+---
+/**
+ * Galeria.astro — galería visual (#galeria). Masonry LIGERO (CSS columns + aspectos variados,
+ * anti-IA §3 tell #5: nada de grid de cards idénticas) con lightbox ACCESIBLE construido sobre
+ * <dialog> nativo (focus trap + Escape gratis), con botones prev/next y navegación por flechas
+ * (no solo swipe). Las miniaturas son <Picture> AVIF+WebP lazy; el lightbox carga una versión
+ * grande (getImage) que el navegador solo descarga al abrir. Overlay de marca sutil para cohesión.
+ */
+import { Picture, getImage } from 'astro:assets';
+import Section from '../ui/Section.astro';
+import Eyebrow from '../ui/Eyebrow.astro';
+import { X, ChevronLeft, ChevronRight, Expand } from '@lucide/astro';
+
+import aerea from '../../assets/images/estacion/vista-aerea.jpg';
+import nocturna from '../../assets/images/galeria/nocturna-lluvia.jpg';
+import surtidor from '../../assets/images/servicios/surtidor-detalle.jpg';
+import tienda from '../../assets/images/servicios/tienda-conveniencia.jpg';
+import lavado from '../../assets/images/servicios/lavado-autos.jpg';
+import equipo from '../../assets/images/estacion/equipo-atendiendo.jpg';
+
+// Aspectos VARIADOS a propósito para que el masonry escalone (no un grid uniforme).
+const items = [
+  {
+    src: aerea,
+    ratio: 'aspect-[16/10]',
+    alt: 'Vista aérea de la estación Ruta 27 junto a la Autopista Duarte, rodeada de vegetación tropical.',
+  },
+  {
+    src: nocturna,
+    ratio: 'aspect-[4/5]',
+    alt: 'La estación Ruta 27 de noche tras la lluvia, con las luces de la marquesina reflejadas en el pavimento mojado.',
+  },
+  {
+    src: surtidor,
+    ratio: 'aspect-[4/3]',
+    alt: 'Detalle de una mano sosteniendo la pistola de despacho en un surtidor de Ruta 27.',
+  },
+  {
+    src: tienda,
+    ratio: 'aspect-[3/4]',
+    alt: 'Interior de la tienda de conveniencia de Ruta 27, con estantes surtidos y neveras de bebidas.',
+  },
+  {
+    src: lavado,
+    ratio: 'aspect-[16/10]',
+    alt: 'Carro pasando por el lavado de Ruta 27 entre espuma y agua a presión.',
+  },
+  {
+    src: equipo,
+    ratio: 'aspect-[4/3]',
+    alt: 'Empleado de Ruta 27 en uniforme verde y ámbar atendiendo el surtidor.',
+  },
+];
+
+// Versión grande (WebP) para el lightbox: se genera en build y el navegador la baja solo al abrir.
+const fulls = await Promise.all(
+  items.map((it) => getImage({ src: it.src, format: 'webp', width: 1600 })),
+);
+---
+
+<Section id="galeria" space="xl" containerSize="wide" labelledby="galeria-title">
+  <div class="max-w-2xl" data-reveal>
+    <Eyebrow numero="05">Galería</Eyebrow>
+    <h2 id="galeria-title" class="mt-3 font-display text-h1 font-semibold text-balance">
+      Así se ve parar en Ruta 27.
+    </h2>
+    <p class="mt-4 text-lead text-ink-muted">
+      Un vistazo a la estación de día y de noche, el patio, la tienda y el equipo que te atiende.
+    </p>
+  </div>
+
+  <!-- Masonry ligero: columnas CSS + break-inside-avoid. Orden del DOM = orden del lightbox. -->
+  <ul class="mt-12 columns-1 gap-4 sm:columns-2 lg:columns-3" data-reveal-group>
+    {
+      items.map((it, i) => (
+        <li class="mb-4 break-inside-avoid">
+          <button
+            type="button"
+            class="group relative block w-full overflow-hidden rounded-lg border border-line shadow-1 transition-shadow duration-[--dur-base] hover:shadow-2"
+            data-lightbox-trigger
+            data-index={i}
+            data-full={fulls[i].src}
+            data-alt={it.alt}
+            aria-haspopup="dialog"
+            aria-label={`Ampliar foto: ${it.alt}`}
+          >
+            <div class:list={['relative', it.ratio]}>
+              <Picture
+                src={it.src}
+                formats={['avif', 'webp']}
+                widths={[300, 500, 700, 900]}
+                sizes="(min-width: 1024px) 30vw, (min-width: 640px) 45vw, 92vw"
+                alt=""
+                loading="lazy"
+                decoding="async"
+                class="absolute inset-0 h-full w-full object-cover transition-transform duration-[--dur-slow] ease-[--ease-out-soft] group-hover:scale-[1.04]"
+              />
+              {/* Overlay de marca sutil (cohesión + legibilidad del icono al hover). */}
+              <div
+                class="pointer-events-none absolute inset-0 bg-gradient-to-t from-[color-mix(in_oklab,var(--brand)_55%,transparent)] via-transparent to-transparent opacity-60 transition-opacity duration-[--dur-base] group-hover:opacity-80"
+                aria-hidden="true"
+              />
+              <span
+                class="absolute right-3 bottom-3 inline-flex size-9 items-center justify-center rounded-md border border-line bg-surface/90 text-ink opacity-0 backdrop-blur-sm transition-opacity duration-[--dur-base] group-hover:opacity-100"
+                aria-hidden="true"
+              >
+                <Expand size={16} />
+              </span>
+            </div>
+          </button>
+        </li>
+      ))
+    }
+  </ul>
+
+  <!-- Lightbox: <dialog> nativo → focus trap + Escape sin JS extra. -->
+  <dialog
+    id="galeria-lightbox"
+    class="m-auto w-[min(94vw,1100px)] max-w-full rounded-xl border border-line bg-surface p-0 text-ink shadow-3 backdrop:backdrop-blur-sm"
+    aria-label="Galería de fotos de Ruta 27"
+  >
+    <div class="relative flex flex-col">
+      <button
+        type="button"
+        data-lb-close
+        class="absolute top-3 right-3 z-10 inline-flex size-10 items-center justify-center rounded-md border border-line bg-surface/90 text-ink backdrop-blur-sm transition-colors duration-[--dur-fast] hover:bg-surface-sunken"
+        aria-label="Cerrar galería"
+      >
+        <X size={20} aria-hidden="true" />
+      </button>
+
+      <div class="relative flex items-center justify-center bg-surface-sunken">
+        <img data-lb-img src="" alt="" class="max-h-[78dvh] w-auto max-w-full object-contain" />
+
+        <button
+          type="button"
+          data-lb-prev
+          class="absolute top-1/2 left-2 inline-flex size-10 -translate-y-1/2 items-center justify-center rounded-md border border-line bg-surface/90 text-ink backdrop-blur-sm transition-colors duration-[--dur-fast] hover:bg-surface-sunken"
+          aria-label="Foto anterior"
+        >
+          <ChevronLeft size={22} aria-hidden="true" />
+        </button>
+        <button
+          type="button"
+          data-lb-next
+          class="absolute top-1/2 right-2 inline-flex size-10 -translate-y-1/2 items-center justify-center rounded-md border border-line bg-surface/90 text-ink backdrop-blur-sm transition-colors duration-[--dur-fast] hover:bg-surface-sunken"
+          aria-label="Foto siguiente"
+        >
+          <ChevronRight size={22} aria-hidden="true" />
+        </button>
+      </div>
+
+      <figcaption
+        class="flex items-center justify-between gap-4 border-t border-line px-5 py-3 text-small text-ink-muted"
+      >
+        <span data-lb-caption aria-live="polite"></span>
+        <span data-lb-counter class="shrink-0 tabular-nums"></span>
+      </figcaption>
+    </div>
+  </dialog>
+</Section>
+
+<style>
+  /* Scrim oscuro en AMBOS temas (carbon-950 es primitivo de tokens). backdrop-filter sólo en
+     modales (regla §3 tell #7). */
+  #galeria-lightbox::backdrop {
+    background-color: color-mix(in oklab, var(--color-carbon-950) 82%, transparent);
+  }
+</style>
+
+<script>
+  // Lightbox accesible. Se inicializa en cada carga/navegación (ClientRouter → astro:page-load).
+  // Idempotente: re-consulta el DOM vigente; los listeners viven en elementos que se reemplazan
+  // al navegar, así que no se acumulan.
+  function initGaleria() {
+    const dialog = document.getElementById('galeria-lightbox') as HTMLDialogElement | null;
+    if (!dialog) return;
+    const triggers = Array.from(
+      document.querySelectorAll<HTMLButtonElement>('[data-lightbox-trigger]'),
+    );
+    if (!triggers.length) return;
+
+    const img = dialog.querySelector<HTMLImageElement>('[data-lb-img]');
+    const caption = dialog.querySelector<HTMLElement>('[data-lb-caption]');
+    const counter = dialog.querySelector<HTMLElement>('[data-lb-counter]');
+    const btnPrev = dialog.querySelector<HTMLButtonElement>('[data-lb-prev]');
+    const btnNext = dialog.querySelector<HTMLButtonElement>('[data-lb-next]');
+    const btnClose = dialog.querySelector<HTMLButtonElement>('[data-lb-close]');
+    if (!img || !caption || !counter || !btnPrev || !btnNext || !btnClose) return;
+
+    const slides = triggers.map((t) => ({ full: t.dataset.full ?? '', alt: t.dataset.alt ?? '' }));
+    let current = 0;
+    let lastFocused: HTMLElement | null = null;
+
+    const show = (i: number) => {
+      current = (i + slides.length) % slides.length;
+      const s = slides[current];
+      img.src = s.full;
+      img.alt = s.alt;
+      caption.textContent = s.alt;
+      counter.textContent = `${current + 1} / ${slides.length}`;
+    };
+
+    const open = (i: number) => {
+      lastFocused = document.activeElement as HTMLElement;
+      show(i);
+      dialog.showModal();
+      btnNext.focus();
+    };
+
+    triggers.forEach((t, i) => t.addEventListener('click', () => open(i)));
+    btnPrev.addEventListener('click', () => show(current - 1));
+    btnNext.addEventListener('click', () => show(current + 1));
+    btnClose.addEventListener('click', () => dialog.close());
+
+    // Flechas ←/→ para navegar (Escape lo maneja <dialog> nativo).
+    dialog.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        show(current - 1);
+      } else if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        show(current + 1);
+      }
+    });
+
+    // Clic en el backdrop (fuera del contenido) cierra.
+    dialog.addEventListener('click', (e) => {
+      if (e.target === dialog) dialog.close();
+    });
+
+    // Al cerrar (botón o Escape), devolver el foco al disparador.
+    dialog.addEventListener('close', () => lastFocused?.focus?.());
+  }
+
+  document.addEventListener('astro:page-load', initGaleria);
+</script>
