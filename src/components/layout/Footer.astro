@@ -40,7 +40,7 @@ const SOCIAL_SVG: Record<string, string> = {
 
 <footer class="footer-brand relative z-10 mt-24 sm:mt-28">
   <Container size="wide" class="py-16 sm:py-20">
-    <div class="grid gap-12 md:grid-cols-12">
+    <div class="grid gap-12 md:grid-cols-12" data-reveal-group>
       <!-- Marca -->
       <div class="md:col-span-5">
         <a href="#inicio" class="font-display text-h2 leading-none font-semibold text-ink">
@@ -81,9 +81,13 @@ const SOCIAL_SVG: Record<string, string> = {
               <li>
                 <a
                   href={item.href}
-                  class="text-body text-ink-muted transition-colors hover:text-ink"
+                  class="group relative inline-block text-body text-ink-muted transition-colors hover:text-ink"
                 >
                   {item.label}
+                  <span
+                    class="absolute inset-x-0 -bottom-0.5 h-px origin-left scale-x-0 bg-accent transition-transform duration-200 ease-out-soft group-hover:scale-x-100"
+                    aria-hidden="true"
+                  />
                 </a>
               </li>
             ))

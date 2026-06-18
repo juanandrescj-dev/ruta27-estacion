@@ -2,13 +2,16 @@
 /**
  * BaseLayout.astro — esqueleto <html> compartido (§7, §9.3).
  * ─────────────────────────────────────────────────────────────────────────────────────
- * - Script anti-FOUC `is:inline` (fija `data-theme` ANTES del primer paint y lo re-aplica en
- *   `astro:after-swap` para View Transitions).
+ * - Script anti-FOUC `is:inline` (fija `data-theme` y la clase `motion-ready` ANTES del primer
+ *   paint y los re-aplica en `astro:after-swap` para View Transitions).
+ * - `<ClientRouter/>`: View Transitions entre páginas (index ↔ 404) (§6.4 Fase 4).
  * - SEO técnico base: canonical, Open Graph, Twitter Card, color-scheme/theme-color por tema.
  * - Datos estructurados: cada string de `jsonLd` se emite como un <script type=ld+json>.
  * - Preload de la fuente del hero (LCP), skip-link y overlay de grano.
+ * - Bootstrap de motion (`scripts/motion`): se importa en diferido solo bajo `no-preference`.
  */
 import '../styles/global.css';
+import { ClientRouter } from 'astro:transitions';
 import { SITE } from '../config/site';
 
 interface Props {
@@ -31,23 +34,34 @@ const ogImage = new URL(SITE.ogImage, Astro.site).href;
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    {/* Anti-FOUC: lo primero, antes del CSS, para evitar el flash de tema al cargar/navegar. */}
+    {
+      /* Anti-FOUC: lo primero, antes del CSS, para evitar el flash de tema al cargar/navegar.
+        Fija además `motion-ready` ANTES del primer paint, de modo que el CSS pueda ocultar los
+        scroll-reveals sin parpadeo (solo si hay JS y el usuario NO pidió reducir movimiento).
+        Se re-ejecuta en `astro:after-swap` porque las View Transitions reinician los atributos
+        y clases de <html> a los de la página entrante. */
+    }
     <script is:inline>
       (function () {
+        const root = document.documentElement;
         const apply = function () {
           try {
             const s = localStorage.getItem('theme');
             const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            document.documentElement.dataset.theme =
+            root.dataset.theme =
               s === 'dark' ? 'dark' : s === 'light' ? 'light' : prefersDark ? 'dark' : 'light';
           } catch {
             /* localStorage no disponible: se queda en el tema por defecto (claro). */
           }
+          const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+          root.classList.toggle('motion-ready', !reduce);
         };
         apply();
         document.addEventListener('astro:after-swap', apply);
       })();
     </script>
+
+    <ClientRouter />
 
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
@@ -99,5 +113,16 @@ const ogImage = new URL(SITE.ogImage, Astro.site).href;
     <a href="#main" class="skip-link">Saltar al contenido</a>
     <slot />
     <div class="grain-overlay" aria-hidden="true"></div>
+
+    {
+      /* Motion (§6.4): Lenis + GSAP/ScrollTrigger/SplitText. Se IMPORTA en diferido solo si el
+        usuario permite movimiento → bajo prefers-reduced-motion no se descarga ni un byte de
+        GSAP/Lenis (a11y + perf). El módulo se autogestiona en los eventos del ClientRouter. */
+    }
+    <script>
+      if (window.matchMedia('(prefers-reduced-motion: no-preference)').matches) {
+        import('../scripts/motion');
+      }
+    </script>
   </body>
 </html>
