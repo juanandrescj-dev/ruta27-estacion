@@ -273,12 +273,6 @@ const accessKey = import.meta.env.PUBLIC_WEB3FORMS_ACCESS_KEY || '';
       statusDiv.classList.remove('hidden');
       submitBtn.disabled = true;
 
-      // Reseteamos aria-invalid
-      const inputs = form.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>(
-        'input[required], textarea[required]',
-      );
-      inputs.forEach((input) => input.setAttribute('aria-invalid', 'false'));
-
       const formData = new FormData(form);
 
       // Verificamos honeypot
@@ -312,9 +306,8 @@ const accessKey = import.meta.env.PUBLIC_WEB3FORMS_ACCESS_KEY || '';
         statusDiv.classList.add('text-signal-text');
         statusDiv.textContent =
           'Hubo un error al enviar el mensaje. Por favor, intenta de nuevo o escríbenos directamente por WhatsApp.';
-
-        // Marcar campos con aria-invalid ante fallo general o de red
-        inputs.forEach((input) => input.setAttribute('aria-invalid', 'true'));
+        // No marcamos aria-invalid: el fallo es de red/servidor, no de los valores del
+        // usuario. El mensaje en la región aria-live ya comunica el error.
       } finally {
         submitBtn.disabled = false;
       }
