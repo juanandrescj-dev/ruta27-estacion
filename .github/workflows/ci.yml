@@ -1,0 +1,78 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# Cancela ejecuciones anteriores de la misma rama/PR cuando llega un nuevo push.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  HUSKY: '0' # en CI no instalamos los git hooks de Husky.
+
+jobs:
+  # ── Calidad de código: lint + formato + tipos + build estático ─────────────────────────
+  quality:
+    name: Calidad (lint · formato · tipos · build)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4 # toma la versión de `packageManager` en package.json
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22 # Node 22 LTS, igual que el deploy en Cloudflare
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+      - run: pnpm format:check
+      - run: pnpm typecheck # astro check
+      - run: pnpm build
+
+  # ── Pruebas e2e + accesibilidad (axe) + regresión visual ───────────────────────────────
+  # Corre dentro de la imagen oficial de Playwright fijada a la MISMA versión que el proyecto:
+  # así los navegadores vienen preinstalados y las capturas visuales casan pixel a pixel con
+  # las baselines (generadas en esta misma imagen).
+  e2e:
+    name: Pruebas e2e · a11y · visual
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.61.0-noble
+    steps:
+      - uses: actions/checkout@v4
+      - run: corepack enable
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - name: Pruebas e2e + accesibilidad (desktop + móvil)
+        run: pnpm test:e2e
+      - name: Regresión visual (claro/oscuro)
+        run: pnpm test:visual
+      - name: Subir reporte de Playwright si algo falla
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 14
+
+  # ── Presupuesto Lighthouse (móvil) con Lighthouse CI ───────────────────────────────────
+  lighthouse:
+    name: Lighthouse CI (presupuesto móvil)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - name: Lighthouse CI
+        uses: treosh/lighthouse-ci-action@v12
+        with:
+          configPath: ./lighthouserc.json
+          temporaryPublicStorage: true
