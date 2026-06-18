@@ -35,7 +35,7 @@ const span = [
 ---
 
 <Section id="combustibles" space="lg" containerSize="wide" labelledby="combustibles-title">
-  <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+  <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between" data-reveal>
     <div class="max-w-2xl">
       <Eyebrow numero="01">Combustibles y precios</Eyebrow>
       <h2 id="combustibles-title" class="mt-3 font-display text-h1 font-semibold text-balance">
@@ -47,7 +47,7 @@ const span = [
     </p>
   </div>
 
-  <ul class="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-6">
+  <ul class="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-6" data-reveal-group>
     {
       combustibles.map((c, i) => {
         const featured = i === 0;
@@ -105,7 +105,7 @@ const span = [
     }
   </ul>
 
-  <div class="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+  <div class="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between" data-reveal>
     <p class="max-w-2xl text-small text-ink-muted">
       Precios oficiales ilustrativos{
         vigencia ? `, actualizados al ${formatFechaLarga(vigencia)}` : ''

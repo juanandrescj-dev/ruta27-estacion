@@ -35,4 +35,11 @@ export default tseslint.config(
       globals: { ...globals.node },
     },
   },
+  // Scripts de cliente (motion, etc.): se ejecutan en el navegador.
+  {
+    files: ['src/scripts/**/*.{ts,js}'],
+    languageOptions: {
+      globals: { ...globals.browser },
+    },
+  },
 );

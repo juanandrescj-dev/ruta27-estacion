@@ -8,6 +8,7 @@
 @import './fonts.css';
 @import './tokens.css';
 @import 'maplibre-gl/dist/maplibre-gl.css';
+@import 'lenis/dist/lenis.css';
 
 /*
  * Dark mode por ATRIBUTO (no clase .dark) — convención de design systems serios (§7).
@@ -43,6 +44,13 @@
        dejamos la variable lista para sobreescribir su altura real. */
     --header-h: 4.5rem;
     scroll-behavior: smooth;
+  }
+
+  /* Con Lenis activo, el smooth-scroll lo conduce Lenis: desactivamos el nativo para que no
+     compitan (§6.4). Lenis mantiene la clase `.lenis` en <html> mientras existe la instancia;
+     bajo reduce no se crea y el media query de prefers-reduced-motion ya fuerza `auto`. */
+  html.lenis {
+    scroll-behavior: auto;
   }
 
   body {
@@ -126,6 +134,25 @@
       animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;
       scroll-behavior: auto !important;
+    }
+  }
+
+  /*
+   * Estado inicial de los SCROLL REVEALS (§6.4). GSAP los anima a visible al entrar en viewport.
+   * Se ocultan SOLO cuando concurren dos condiciones, para que el contenido nunca quede atrapado
+   * invisible:
+   *   1) `.motion-ready` en <html> — la añade el script anti-FOUC únicamente si hay JS y el
+   *      usuario NO pidió reducir movimiento (y la re-aplica tras cada View Transition).
+   *   2) @media prefers-reduced-motion: no-preference — cinturón y tirantes: aunque la clase
+   *      estuviera puesta, bajo `reduce` el contenido permanece visible.
+   * Si GSAP fallara al cargar, el controlador quita `.motion-ready` en su catch → todo visible.
+   */
+  @media (prefers-reduced-motion: no-preference) {
+    html.motion-ready [data-reveal],
+    html.motion-ready [data-reveal-group] > *,
+    html.motion-ready [data-hero-intro] > * {
+      opacity: 0;
+      will-change: transform, opacity;
     }
   }
 }

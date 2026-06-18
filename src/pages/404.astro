@@ -23,21 +23,25 @@ import { ArrowLeft } from '@lucide/astro';
   </header>
 
   <main id="main" class="flex min-h-[100dvh] flex-col justify-center py-28">
-    <Container size="default" class="flex flex-col items-start">
-      <Eyebrow numero="404">Ruta sin salida</Eyebrow>
-      <p class="mt-6 font-display text-display leading-none font-semibold text-brand tabular-nums">
-        404
-      </p>
-      <h1 class="mt-5 max-w-2xl font-display text-h1 font-semibold text-balance">
-        Esta vía no está en el mapa.
-      </h1>
-      <p class="mt-5 max-w-xl text-lead text-ink-muted">
-        La página que buscas se mudó o nunca existió. Regresa al inicio y sigue tu ruta desde ahí.
-      </p>
-      <div class="mt-9">
-        <Button variant="primario" href="/">
-          <ArrowLeft size={18} aria-hidden="true" /> Volver al inicio
-        </Button>
+    <Container size="default">
+      <div class="flex flex-col items-start" data-reveal-group>
+        <Eyebrow numero="404">Ruta sin salida</Eyebrow>
+        <p
+          class="mt-6 font-display text-display leading-none font-semibold text-brand tabular-nums"
+        >
+          404
+        </p>
+        <h1 class="mt-5 max-w-2xl font-display text-h1 font-semibold text-balance">
+          Esta vía no está en el mapa.
+        </h1>
+        <p class="mt-5 max-w-xl text-lead text-ink-muted">
+          La página que buscas se mudó o nunca existió. Regresa al inicio y sigue tu ruta desde ahí.
+        </p>
+        <div class="mt-9">
+          <Button variant="primario" href="/">
+            <ArrowLeft size={18} aria-hidden="true" /> Volver al inicio
+          </Button>
+        </div>
       </div>
     </Container>
   </main>

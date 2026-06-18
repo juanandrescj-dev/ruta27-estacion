@@ -29,7 +29,7 @@ const accessKey = import.meta.env.PUBLIC_WEB3FORMS_ACCESS_KEY || '';
 <Section id="contacto" space="xl" containerSize="wide" labelledby="contacto-title">
   <div class="grid gap-10 lg:grid-cols-12 lg:gap-14">
     <!-- Canales de contacto directos: 5/12 -->
-    <div class="flex flex-col justify-center lg:col-span-5">
+    <div class="flex flex-col justify-center lg:col-span-5" data-reveal-group>
       <Eyebrow numero="08">Contacto</Eyebrow>
       <h2 id="contacto-title" class="mt-3 font-display text-h1 font-semibold text-balance">
         Conéctate con nuestro equipo.
@@ -151,7 +151,7 @@ const accessKey = import.meta.env.PUBLIC_WEB3FORMS_ACCESS_KEY || '';
     </div>
 
     <!-- Formulario de contacto: 7/12 -->
-    <div class="lg:col-span-7">
+    <div class="lg:col-span-7" data-reveal>
       <div class="rounded-lg border border-line bg-surface p-7 shadow-2 sm:p-10">
         <form
           id="contact-form"
@@ -258,11 +258,16 @@ const accessKey = import.meta.env.PUBLIC_WEB3FORMS_ACCESS_KEY || '';
 </Section>
 
 <script>
-  const form = document.getElementById('contact-form') as HTMLFormElement | null;
-  const statusDiv = document.getElementById('form-status') as HTMLDivElement | null;
-  const submitBtn = document.getElementById('form-submit') as HTMLButtonElement | null;
+  // Se reengancha en cada `astro:page-load` (carga inicial y navegación con View Transitions),
+  // porque el ClientRouter intercambia el DOM y los módulos no se re-ejecutan solos. Cada
+  // page-load trae un <form> nuevo, así que re-consultar y volver a enlazar no duplica listeners.
+  function initContactForm() {
+    const form = document.getElementById('contact-form') as HTMLFormElement | null;
+    const statusDiv = document.getElementById('form-status') as HTMLDivElement | null;
+    const submitBtn = document.getElementById('form-submit') as HTMLButtonElement | null;
 
-  if (form && statusDiv && submitBtn) {
+    if (!form || !statusDiv || !submitBtn) return;
+
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
 
@@ -313,4 +318,6 @@ const accessKey = import.meta.env.PUBLIC_WEB3FORMS_ACCESS_KEY || '';
       }
     });
   }
+
+  document.addEventListener('astro:page-load', initContactForm);
 </script>

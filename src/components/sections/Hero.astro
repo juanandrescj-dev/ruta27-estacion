@@ -29,11 +29,14 @@ const estado = estaAbiertoAhora(horarios);
   <Container size="wide">
     <div class="grid items-center gap-10 lg:grid-cols-12 lg:gap-12">
       <!-- Columna de texto: 7/12 -->
-      <div class="lg:col-span-7">
+      <div class="lg:col-span-7" data-hero-intro>
         <Eyebrow numero="00">Inicio</Eyebrow>
 
-        <h1 class="mt-6 max-w-[18ch] font-display text-display leading-[1.02] font-semibold">
-          Combustible de confianza en <span class="text-brand">Santiago</span>, cada día del año.
+        <h1
+          class="mt-6 max-w-[18ch] font-display text-display leading-[1.02] font-semibold"
+          data-hero-title
+        >
+          Combustible de confianza en <span class="text-brand">Santiago,</span> cada día del año.
         </h1>
 
         <p class="mt-6 max-w-xl text-lead text-ink-muted">
@@ -70,6 +73,7 @@ const estado = estaAbiertoAhora(horarios);
       <div class="lg:col-span-5">
         <figure
           class="relative aspect-[4/5] overflow-hidden rounded-xl border border-line bg-surface-sunken shadow-2"
+          data-hero-parallax
         >
           <!-- Marca de agua editorial -->
           <span
