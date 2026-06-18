@@ -13,6 +13,7 @@ export default function MapaInteractivo({ lat, lng, nombre, direccion }: Props) 
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const [inView, setInView] = useState(false);
   const [mapLoaded, setMapLoaded] = useState(false);
+  const [error, setError] = useState(false);
   const mapRef = useRef<Map | null>(null);
 
   // 1. Sincronización de tema
@@ -59,10 +60,19 @@ export default function MapaInteractivo({ lat, lng, nombre, direccion }: Props) 
     if (!inView || typeof window === 'undefined') return;
 
     let active = true;
+    let loadTimeout: ReturnType<typeof setTimeout> | undefined;
 
     async function initMap() {
-      // Importación dinámica para evitar que pete en SSR de Astro
-      const maplibregl = await import('maplibre-gl');
+      // Importación dinámica para evitar que pete en SSR de Astro.
+      // Si falla (sin red / chunk inaccesible) mostramos el fallback en vez de cargar sin fin.
+      const maplibregl = await import('maplibre-gl').catch((err: unknown) => {
+        console.error('[MapaInteractivo] No se pudo cargar MapLibre:', err);
+        return null;
+      });
+      if (!maplibregl) {
+        if (active) setError(true);
+        return;
+      }
 
       if (!active || !mapContainerRef.current) return;
 
@@ -113,21 +123,37 @@ export default function MapaInteractivo({ lat, lng, nombre, direccion }: Props) 
       new maplibregl.Marker({ element: el }).setLngLat([lng, lat]).setPopup(popup).addTo(map);
 
       map.on('load', () => {
-        if (active) {
-          setMapLoaded(true);
-        }
+        if (!active) return;
+        if (loadTimeout) clearTimeout(loadTimeout);
+        setError(false);
+        setMapLoaded(true);
       });
+
+      // MapLibre emite 'error' también por incidencias menores (un icono de sprite ausente,
+      // un tile suelto): solo lo registramos. Si el fallo es fatal, lo detecta el timeout.
+      map.on('error', (ev) => {
+        console.warn('[MapaInteractivo] Error de MapLibre:', ev.error?.message ?? ev);
+      });
+
+      // Red caída / CSP / tiles inaccesibles: si en 10 s el mapa no terminó de cargar,
+      // mostramos un fallback con enlaces directos en vez de girar indefinidamente.
+      loadTimeout = setTimeout(() => {
+        if (active && !map.loaded()) setError(true);
+      }, 10000);
     }
 
     initMap();
 
     return () => {
       active = false;
+      if (loadTimeout) clearTimeout(loadTimeout);
       if (mapRef.current) {
         mapRef.current.remove();
         mapRef.current = null;
       }
     };
+    // Deps = [inView] a propósito: el tema NO recrea el mapa (lo actualiza el efecto #4 con
+    // setStyle); recrearlo en cada toggle sería más costoso y perdería el estado de cámara.
   }, [inView]);
 
   // 4. Sincronizar estilo en runtime al alternar data-theme
@@ -151,7 +177,7 @@ export default function MapaInteractivo({ lat, lng, nombre, direccion }: Props) 
       <div ref={mapContainerRef} className="absolute inset-0 h-full w-full" />
 
       {/* Placeholder con loader antes de cargar y mientras renderiza */}
-      {(!inView || !mapLoaded) && (
+      {!error && (!inView || !mapLoaded) && (
         <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-surface-sunken p-6 text-center">
           <div className="flex animate-pulse flex-col items-center">
             <div className="mb-4 flex size-12 items-center justify-center rounded-full border border-brand/20 bg-brand/10 text-brand">
@@ -173,6 +199,54 @@ export default function MapaInteractivo({ lat, lng, nombre, direccion }: Props) 
               Cargando mapa interactivo...
             </p>
             <p className="mt-1 max-w-xs text-small text-ink-muted">{direccion}</p>
+          </div>
+        </div>
+      )}
+
+      {/* Fallback accesible si el mapa no carga (red caída, CSP o tiles inaccesibles):
+          el usuario nunca queda sin opción para llegar a la estación. */}
+      {error && (
+        <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-4 bg-surface-sunken p-6 text-center">
+          <div className="flex size-12 items-center justify-center rounded-full border border-line bg-surface text-ink-muted">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.75"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              className="size-6"
+              aria-hidden="true"
+            >
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+              <circle cx="12" cy="10" r="3"></circle>
+              <line x1="3" y1="3" x2="21" y2="21"></line>
+            </svg>
+          </div>
+          <div>
+            <p className="font-display text-body font-semibold text-ink">
+              No pudimos cargar el mapa
+            </p>
+            <p className="mt-1 max-w-xs text-small text-ink-muted">{direccion}</p>
+          </div>
+          <div className="flex flex-wrap items-center justify-center gap-2">
+            <a
+              href={`https://maps.google.com/?q=${lat},${lng}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center rounded-sm bg-brand px-3 py-2 text-small font-semibold text-on-brand transition duration-200 hover:opacity-90"
+            >
+              Abrir en Google Maps
+            </a>
+            <a
+              href={`https://waze.com/ul?ll=${lat},${lng}&navigate=yes`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center rounded-sm border border-line bg-surface px-3 py-2 text-small font-semibold text-ink transition duration-200 hover:border-line-strong"
+            >
+              Waze
+            </a>
           </div>
         </div>
       )}
